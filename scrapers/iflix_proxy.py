@@ -18,6 +18,7 @@
 import scraper
 from salts_lib.trans_utils import i18n
 from salts_lib import log_utils
+from salts_lib.constants import VIDEO_TYPES
 try:
     from iflix_scraper import Iflix_Scraper as real_scraper
 except Exception as e:
@@ -30,20 +31,20 @@ class IFlix_Proxy(scraper.Scraper):
         self.timeout = timeout
         self.exists = False
         self._update_scraper_py('iflix_scraper.py')
+        self.__scraper = None
         if self.exists:
             try:
                 from iflix_scraper import Iflix_Scraper as real_scraper
                 self.__scraper = real_scraper(timeout)
             except Exception as e:
                 log_utils.log('Failure during %s scraper creation: %s' % (self.get_name(), e), log_utils.LOGWARNING)
-                self.__scraper = None
    
     @classmethod
     def provides(cls):
         try:
             return real_scraper.provides()
         except:
-            return frozenset([])
+            return frozenset([VIDEO_TYPES.TVSHOW, VIDEO_TYPES.EPISODE, VIDEO_TYPES.MOVIE])
     
     @classmethod
     def get_name(cls):
