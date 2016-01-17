@@ -1068,8 +1068,6 @@ def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', 
             hosters = apply_urlresolver(hosters)
             
             if kodi.get_setting('enable_sort') == 'true':
-                if kodi.get_setting('filter-unknown') == 'true':
-                    hosters = utils.filter_unknown_hosters(hosters)
                 SORT_KEYS['source'] = utils.make_source_sort_key()
                 hosters.sort(key=utils.get_sort_key)
             if pd.is_canceled(): return False

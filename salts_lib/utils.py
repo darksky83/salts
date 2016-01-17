@@ -305,16 +305,6 @@ def filename_from_title(title, video_type, year=None):
     xbmc.makeLegalFilename(filename)
     return filename
 
-def filter_unknown_hosters(hosters):
-    filtered_hosters = []
-    for host in hosters:
-        for key, _ in SORT_FIELDS:
-            if key in host and host[key] is None:
-                break
-        else:
-            filtered_hosters.append(host)
-    return filtered_hosters
-
 def filter_exclusions(hosters):
     exclusions = kodi.get_setting('excl_list')
     exclusions = exclusions.replace(' ', '')

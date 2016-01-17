@@ -123,23 +123,22 @@
     
     <category label="30591">
         <setting id="enable_sort" type="bool" label="30592" default="false"/>
-        <setting id="filter-unknown" type="bool" label="30593" default="false" visible="eq(-1,true)"/>
-        <setting id="sort1_field" type="enum" label="30594" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" visible="eq(-2,true)"/>
-        <setting id="sort1_order" type="enum" label="30595" lvalues="30610|30611" default="0" visible="eq(-3,true) + !eq(-1,0)"/>
-        <setting id="sort2_field" type="enum" label="30596" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" visible="eq(-4,true) + !eq(-2,0)"/>
-        <setting id="sort2_order" type="enum" label="30597" lvalues="30610|30611" default="0" visible="eq(-5,true) + !eq(-1,0)+!eq(-3,0)"/>
-        <setting id="sort3_field" type="enum" label="30598" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" visible="eq(-6,true) + !eq(-2,0) + !eq(-4,0)"/>
-        <setting id="sort3_order" type="enum" label="30599" lvalues="30610|30611" default="0" visible="eq(-7,true) + !eq(-1,0) + !eq(-3,0) + !eq(-5,0) "/>
-        <setting id="sort4_field" type="enum" label="30600" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" visible="eq(-8,true) + !eq(-2,0) + !eq(-4,0) + !eq(-6,0)"/>
-        <setting id="sort4_order" type="enum" label="30601" lvalues="30610|30611" default="0" visible="eq(-9,true) + !eq(-1,0) + !eq(-3,0) + !eq(-5,0) + !eq(-7,0)"/>
+        <setting id="sort1_field" type="enum" label="30594" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" visible="eq(-1,true)"/>
+        <setting id="sort1_order" type="enum" label="30595" lvalues="30610|30611" default="0" visible="eq(-2,true) + !eq(-1,0)"/>
+        <setting id="sort2_field" type="enum" label="30596" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" visible="eq(-3,true) + !eq(-2,0)"/>
+        <setting id="sort2_order" type="enum" label="30597" lvalues="30610|30611" default="0" visible="eq(-4,true) + !eq(-1,0)+!eq(-3,0)"/>
+        <setting id="sort3_field" type="enum" label="30598" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" visible="eq(-5,true) + !eq(-2,0) + !eq(-4,0)"/>
+        <setting id="sort3_order" type="enum" label="30599" lvalues="30610|30611" default="0" visible="eq(-6,true) + !eq(-1,0) + !eq(-3,0) + !eq(-5,0) "/>
+        <setting id="sort4_field" type="enum" label="30600" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" visible="eq(-7,true) + !eq(-2,0) + !eq(-4,0) + !eq(-6,0)"/>
+        <setting id="sort4_order" type="enum" label="30601" lvalues="30610|30611" default="0" visible="eq(-8,true) + !eq(-1,0) + !eq(-3,0) + !eq(-5,0) + !eq(-7,0)"/>
         <setting id="sort5_field" type="enum" label="30602" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0"
-                visible="eq(-10,true) + !eq(-2,0) + !eq(-4,0) + !eq(-6,0) + !eq(-8,0)"/>
+                visible="eq(-9,true) + !eq(-2,0) + !eq(-4,0) + !eq(-6,0) + !eq(-8,0)"/>
         <setting id="sort5_order" type="enum" label="30603" lvalues="30610|30611" default="0" 
-                visible="eq(-11,true) + !eq(-1,0) + !eq(-3,0) + !eq(-5,0) + !eq(-7,0) + !eq(-9,0)"/>
+                visible="eq(-10,true) + !eq(-1,0) + !eq(-3,0) + !eq(-5,0) + !eq(-7,0) + !eq(-9,0)"/>
         <setting id="sort6_field" type="enum" label="30653" lvalues="30604|30605|30606|30607|30608|30609|30655" default="0" 
-                visible="eq(-12,true) + !eq(-2,0) + !eq(-4,0) + !eq(-6,0) + !eq(-8,0) + !eq(-10,0)"/>
+                visible="eq(-11,true) + !eq(-2,0) + !eq(-4,0) + !eq(-6,0) + !eq(-8,0) + !eq(-10,0)"/>
         <setting id="sort6_order" type="enum" label="30654" lvalues="30610|30611" default="0"
-                visible="eq(-13,true) + !eq(-1,0) + !eq(-3,0) + !eq(-5,0) + !eq(-7,0) + !eq(-9,0) + !eq(-11,0)"/>
+                visible="eq(-12,true) + !eq(-1,0) + !eq(-3,0) + !eq(-5,0) + !eq(-7,0) + !eq(-9,0) + !eq(-11,0)"/>
         <setting id="force_title_match" type="text" label="Shows forced to match only on title" enable="false" visible="false"/>
         <setting id="progress_skip_cache" type="text" label="Shows to skip in get_progress" enable="false" visible="false"/>
         <setting id="force_include_progress" type="text" label="Ended shows forced into get_progress" enable="false" visible="false"/>
