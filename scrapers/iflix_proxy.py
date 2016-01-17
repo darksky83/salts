@@ -19,7 +19,7 @@ import scraper
 from salts_lib.trans_utils import i18n
 from salts_lib import log_utils
 try:
-    import iflix_scraper
+    from iflix_scraper import Iflix_scraper as real_scraper
 except Exception as e:
     log_utils.log('import failed: %s' % (e), log_utils.LOGDEBUG)
 
@@ -34,8 +34,8 @@ class IFlix_Proxy(scraper.Scraper):
         self.__update_scraper_py('iflix_scraper.py')
         if self.exists:
             try:
-                import iflix_scraper
-                self.__scraper = iflix_scraper.Iflix_Scraper(timeout)
+                from iflix_scraper import Iflix_scraper as real_scraper
+                self.__scraper = real_scraper(timeout)
             except Exception as e:
                 log_utils.log('Failure during %s scraper creation: %s' % (self.get_name(), e), log_utils.LOGWARNING)
                 self.__scraper = None
@@ -43,7 +43,7 @@ class IFlix_Proxy(scraper.Scraper):
     @classmethod
     def provides(cls):
         try:
-            return iflix_scraper.Iflix_Scraper.provides()
+            return real_scraper.provides()
         except:
             return frozenset([])
     
@@ -81,7 +81,7 @@ class IFlix_Proxy(scraper.Scraper):
     def get_settings(cls):
         name = cls.get_name()
         try:
-            settings = iflix_scraper.Iflix_Scraper.get_settings()
+            settings = real_scraper.get_settings()
             offset = 5
         except:
             settings = super(IFlix_Proxy, cls).get_settings()
