@@ -268,7 +268,7 @@
          <setting id="IceFilms-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="IceFilms_last_results" type="number" default="0" visible="false"/>
          <setting id="IFlix-enable" type="bool" label="IFlix Enabled" default="true" visible="true"/>
-         <setting id="IFlix-base_url" type="text" label="    Base Url" default="http://iflix.ch" visible="eq(-1,true)"/>
+         <setting id="IFlix-base_url" type="text" label="    Base Url" default="http://cnfstudio.com" visible="eq(-1,true)"/>
          <setting id="IFlix-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="IFlix_last_results" type="number" default="0" visible="false"/>
          <setting id="IFlix-scraper_url" type="text" label="    Scraper Download Url" default="" visible="eq(-4,true)"/>
