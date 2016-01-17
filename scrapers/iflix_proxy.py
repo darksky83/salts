@@ -29,7 +29,7 @@ class IFlix_Proxy(scraper.Scraper):
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
         self.exists = False
-        self.__update_scraper_py('iflix_scraper.py')
+        self._update_scraper_py('iflix_scraper.py')
         if self.exists:
             try:
                 from iflix_scraper import Iflix_Scraper as real_scraper

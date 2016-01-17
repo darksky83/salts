@@ -829,10 +829,11 @@ class Scraper(object):
             log_utils.log('Empty JSON object: %s: %s' % (html, url), log_utils.LOGDEBUG)
             return {}
 
-    def __update_scraper_py(self, filename):
+    def _update_scraper_py(self, filename):
         try:
             py_path = os.path.join(kodi.get_path(), 'scrapers', filename)
             self.exists = os.path.exists(py_path)
+            log_utils.log(self.get_name())
             scraper_url = kodi.get_setting('%s-scraper_url' % (self.get_name()))
             scraper_password = kodi.get_setting('%s-scraper_password' % (self.get_name()))
             if scraper_url and scraper_password and (not self.exists or os.path.getmtime(py_path) < time.time() - (24 * 60 * 60)):
