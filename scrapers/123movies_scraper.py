@@ -119,7 +119,7 @@ class One23Movies_Scraper(scraper.Scraper):
         return sources
     
     def get_url(self, video):
-        return super(One23Movies_Scraper, self)._default_get_url(video)
+        return self._default_get_url(video)
 
     def search(self, video_type, title, year):
         search_url = urlparse.urljoin(self.base_url, '/movie/search/')

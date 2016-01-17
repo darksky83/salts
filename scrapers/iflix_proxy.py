@@ -19,14 +19,12 @@ import scraper
 from salts_lib.trans_utils import i18n
 from salts_lib import log_utils
 try:
-    from iflix_scraper import Iflix_scraper as real_scraper
+    from iflix_scraper import Iflix_Scraper as real_scraper
 except Exception as e:
     log_utils.log('import failed: %s' % (e), log_utils.LOGDEBUG)
 
-BASE_URL = 'http://cnfstudio.com'
-
 class IFlix_Proxy(scraper.Scraper):
-    base_url = BASE_URL
+    base_url = ''
     
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
@@ -34,7 +32,7 @@ class IFlix_Proxy(scraper.Scraper):
         self.__update_scraper_py('iflix_scraper.py')
         if self.exists:
             try:
-                from iflix_scraper import Iflix_scraper as real_scraper
+                from iflix_scraper import Iflix_Scraper as real_scraper
                 self.__scraper = real_scraper(timeout)
             except Exception as e:
                 log_utils.log('Failure during %s scraper creation: %s' % (self.get_name(), e), log_utils.LOGWARNING)
@@ -84,7 +82,7 @@ class IFlix_Proxy(scraper.Scraper):
             settings = real_scraper.get_settings()
             offset = 5
         except:
-            settings = super(IFlix_Proxy, cls).get_settings()
+            settings = super(cls.__name__, cls).get_settings()
             offset = 4
         settings.append('         <setting id="%s-scraper_url" type="text" label="    %s" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_location'), offset))
         settings.append('         <setting id="%s-scraper_password" type="text" label="    %s" option="hidden" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_key'), offset + 1))
