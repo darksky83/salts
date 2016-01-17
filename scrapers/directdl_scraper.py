@@ -128,7 +128,7 @@ class DirectDownload_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(cls.__class__, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         settings = cls._disable_sub_check(settings)
         return settings
 

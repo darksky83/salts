@@ -161,7 +161,7 @@ class WatchHD_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(cls.__class__, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         name = cls.get_name()
         settings.append('         <setting id="%s-auto_pick" type="bool" label="    %s" default="false" visible="eq(-4,true)"/>' % (name, i18n('auto_pick')))
         return settings

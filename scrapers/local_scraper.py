@@ -108,7 +108,7 @@ class Local_Scraper(scraper.Scraper):
 
     @classmethod
     def get_settings(cls):
-        settings = super(cls.__class__, cls).get_settings()
+        settings = super(cls, cls).get_settings()
         name = cls.get_name()
         settings.append('         <setting id="%s-def-quality" type="enum" label="     Default Quality" values="None|Low|Medium|High|HD720|HD1080" default="0" visible="eq(-4,true)"/>' % (name))
         return settings
