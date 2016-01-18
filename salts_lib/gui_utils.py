@@ -184,8 +184,7 @@ def perform_auto_conf(responses):
                  ['CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'TwoMovies.us', 'iWatchOnline', 'vidics.ch', 'pubfilm'],
                  ['OnlineMoviesIs', 'OnlineMoviesPro', 'ViewMovies', 'movie25', 'viooz.ac', 'view47', 'MoviesHD', 'wmo.ch'],
                  ['ayyex', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch'],
-                 ['MovieTube', 'LosMovies', 'FilmStreaming.in', 'moviestorm.eu', 'MerDB'],
-                 'MoviesOnline7']
+                 ['MovieTube', 'LosMovies', 'FilmStreaming.in', 'moviestorm.eu', 'MerDB']]
     
         sso = []
         random_sso = kodi.get_setting('random_sso') == 'true'
