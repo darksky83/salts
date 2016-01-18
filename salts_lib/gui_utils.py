@@ -176,7 +176,7 @@ def perform_auto_conf(responses):
         tiers = ['Local', 'Furk.net', 'Premiumize.me', 'EasyNews', 'DD.tv', 'NoobRoom',
                  ['WatchHD', 'IFlix', 'MoviesPlanet', '9Movies', '123Movies', 'niter.tv', 'ororo.tv'],
                  ['movietv.to', 'StreamLord', 'tunemovie', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'alluc.com'],
-                 ['torba.se', 'IzlemeyeDeger', 'Rainierland', 'zumvo.com', 'PutMV', 'MiraDeTodo', 'beinmovie'],
+                 ['torba.se', 'IzlemeyeDeger', 'Rainierland', 'zumvo.com', 'PutMV', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
                  ['SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Diziay', 'Dizipas', 'OneClickTVShows'],
                  ['DDLValley', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'RLSSource.net', 'TVRelease.Net'],
                  ['IceFilms', 'PrimeWire', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker', 'MovieHut'],
