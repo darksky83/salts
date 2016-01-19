@@ -58,16 +58,25 @@ class MovieFarsi_Scraper(scraper.Scraper):
         norm_title = self._normalize_title(video.title)
         if source_url and source_url != FORCE_NO_MATCH:
             source_url = urlparse.urljoin(self.base_url, source_url)
-            for movie in self.__get_files(source_url, cache_limit=24):
-                match_title, _match_year, height, extra = self._parse_movie_link(movie['link'])
-                if 'dubbed' in extra.lower(): continue
-                if not movie['directory'] and norm_title in self._normalize_title(match_title):
-                    log_utils.log(movie)
-                    stream_url = movie['url'] + '|User-Agent=%s' % (self._get_ua())
-                    hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': self._height_get_quality(height), 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
-                    if 'x265' in extra: hoster['format'] = 'x265'
-                    if 'size' in movie: hoster['size'] = self._format_size(int(movie['size']))
-                    hosters.append(hoster)
+            for line in self.__get_files(source_url, cache_limit=24):
+                if not line['directory']:
+                    match = {}
+                    if video.video_type == VIDEO_TYPES.MOVIE:
+                        match_title, _match_year, height, extra = self._parse_movie_link(line['link'])
+                        if norm_title in self._normalize_title(match_title):
+                            match = line
+                    else:
+                        _show_title, season, episode, height, extra = self._parse_episode_link(line['link'])
+                        if int(video.season) == int(season) and int(video.episode) == int(episode):
+                            match = line
+                        
+                    if 'dubbed' in extra.lower(): continue
+                    if match:
+                        stream_url = match['url'] + '|User-Agent=%s' % (self._get_ua())
+                        hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': self._height_get_quality(height), 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
+                        if 'x265' in extra: hoster['format'] = 'x265'
+                        if 'size' in match: hoster['size'] = self._format_size(int(match['size']))
+                        hosters.append(hoster)
             
         return hosters
 
@@ -77,14 +86,15 @@ class MovieFarsi_Scraper(scraper.Scraper):
     def _get_episode_url(self, show_url, video):
         force_title = self._force_title(video)
         if not force_title:
+            show_url = urlparse.urljoin(self.base_url, show_url)
             html = self._http_get(show_url, cache_limit=24)
-            match = re.search('href="(S%02d/?)"' % (int(video.season)), html)
+            match = re.search('href="(S%02d/)"' % (int(video.season)), html)
             if match:
                 season_url = urlparse.urljoin(show_url, match.group(1))
                 for item in self.__get_files(season_url, cache_limit=1):
                     match = re.search('(\.|_| )S%02d(\.|_| )?E%02d(\.|_| )' % (int(video.season), int(video.episode)), item['title'], re.I)
                     if match:
-                        return season_url
+                        return self._pathify_url(season_url)
             
     def search(self, video_type, title, year):
         results = []
@@ -97,13 +107,19 @@ class MovieFarsi_Scraper(scraper.Scraper):
                     if year == link['title']:
                         url = urlparse.urljoin(base_url, link['link'])
                         for movie in self.__get_files(url, cache_limit=24):
-                            log_utils.log(movie)
                             match_title, match_year, _height, _extra = self._parse_movie_link(movie['link'])
                             if not movie['directory'] and norm_title in self._normalize_title(match_title) and (not year or not match_year or year == match_year):
                                 result = {'url': self._pathify_url(url), 'title': match_title, 'year': year}
                                 results.append(result)
         else:
             base_url = urlparse.urljoin(self.base_url, '/Serial/')
+            html = self._http_get(base_url, cache_limit=48)
+            for link in self.__parse_directory(html):
+                if link['directory'] and norm_title in self._normalize_title(link['title']):
+                    url = urlparse.urljoin(base_url, link['link'])
+                    result = {'url': self._pathify_url(url), 'title': link['title'], 'year': ''}
+                    results.append(result)
+            
         return results
 
     def __get_files(self, url, cache_limit=.5):
