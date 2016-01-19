@@ -18,7 +18,6 @@
 import scraper
 from salts_lib.trans_utils import i18n
 from salts_lib import log_utils
-from salts_lib.constants import VIDEO_TYPES
 try:
     from iflix_scraper import Iflix_Scraper as real_scraper
 except Exception as e:
@@ -29,27 +28,39 @@ class IFlix_Proxy(scraper.Scraper):
     
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
-        self.exists = False
-        self._update_scraper_py('iflix_scraper.py')
         self.__scraper = None
-        if self.exists:
-            try:
-                from iflix_scraper import Iflix_Scraper as real_scraper
-                self.__scraper = real_scraper(timeout)
-            except Exception as e:
-                log_utils.log('Failure during %s scraper creation: %s' % (self.get_name(), e), log_utils.LOGWARNING)
+        try:
+            self.__scraper = real_scraper(timeout)
+        except Exception as e:
+            log_utils.log('Failure during %s scraper creation: %s' % (self.get_name(), e), log_utils.LOGDEBUG)
    
     @classmethod
     def provides(cls):
         try:
             return real_scraper.provides()
         except:
-            return frozenset([VIDEO_TYPES.TVSHOW, VIDEO_TYPES.EPISODE, VIDEO_TYPES.MOVIE])
+            return frozenset([])
     
     @classmethod
     def get_name(cls):
-        return 'IFlix'
+        try:
+            return real_scraper.get_name()
+        except:
+            return 'IFlix'
     
+    @classmethod
+    def get_settings(cls):
+        name = cls.get_name()
+        try:
+            settings = real_scraper.get_settings()
+            offset = 5
+        except:
+            settings = super(cls, cls).get_settings()
+            offset = 4
+        settings.append('         <setting id="%s-scraper_url" type="text" label="    %s" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_location'), offset))
+        settings.append('         <setting id="%s-scraper_password" type="text" label="    %s" option="hidden" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_key'), offset + 1))
+        return settings
+
     def resolve_link(self, link):
         if self.__scraper is not None:
             return self.__scraper.resolve_link(link)
@@ -76,15 +87,4 @@ class IFlix_Proxy(scraper.Scraper):
         if self.__scraper is not None:
             return self.__scraper._get_episode_url(show_url, video)
 
-    @classmethod
-    def get_settings(cls):
-        name = cls.get_name()
-        try:
-            settings = real_scraper.get_settings()
-            offset = 5
-        except:
-            settings = super(cls, cls).get_settings()
-            offset = 4
-        settings.append('         <setting id="%s-scraper_url" type="text" label="    %s" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_location'), offset))
-        settings.append('         <setting id="%s-scraper_password" type="text" label="    %s" option="hidden" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_key'), offset + 1))
-        return settings
+IFlix_Proxy._update_scraper_py('iflix_scraper.py')
