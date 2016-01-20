@@ -3,3 +3,4 @@
 *.pyc
 *.pyo
 scrapers/iflix_scraper.py
+scrapers/ocw_scraper.py
