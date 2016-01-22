@@ -82,9 +82,9 @@ class Flixanity_Scraper(scraper.Scraper):
         if year: search_key += ' %s' % (year)
         search_url += urllib.quote_plus(search_key)
         html = self._http_get(search_url, cache_limit=1)
-        meta = dom_parser.parse_dom(html, 'meta', {'property': 'og:url'}, ret='content')
         
         # detect search results redirect
+        meta = dom_parser.parse_dom(html, 'meta', {'property': 'og:url'}, ret='content')
         if meta:
             match_url = meta[0]
             if '/watch/' in match_url:
