@@ -177,7 +177,7 @@ def perform_auto_conf(responses):
                  ['WatchHD', 'IFlix', 'MoviesPlanet', '9Movies', '123Movies', 'niter.tv', 'HDMovie14', 'ororo.tv'],
                  ['movietv.to', 'StreamLord', 'tunemovie', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'IzlemeyeDeger', 'alluc.com'],
                  ['torba.se', 'Rainierland', 'FardaDownload', 'zumvo.com', 'PutMV', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
-                 ['SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Diziay', 'Dizipas', 'OneClickTVShows'],
+                 ['SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows'],
                  ['DDLValley', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'RLSSource.net', 'TVRelease.Net'],
                  ['IceFilms', 'PrimeWire', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker', 'MovieHut'],
                  ['funtastic-vids', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie', 'yify-streaming'],
