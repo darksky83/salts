@@ -84,6 +84,38 @@ def settings_menu():
     kodi.create_item({'mode': MODES.BROWSE_URLS}, i18n('remove_cached_urls'), thumb=utils.art('settings.png'), fanart=utils.art('fanart.jpg'))
     kodi.end_of_directory()
 
+@url_dispatcher.register(MODES.BROWSE, ['section'])
+def browse_menu(section):
+    section_params = utils.get_section_params(section)
+    section_label = section_params['label_plural']
+    section_label2 = section_params['label_single']
+    if utils.menu_on('trending'): kodi.create_item({'mode': MODES.TRENDING, 'section': section}, i18n('trending') % (section_label), thumb=utils.art('trending.png'), fanart=utils.art('fanart.jpg'))
+    if utils.menu_on('popular'): kodi.create_item({'mode': MODES.POPULAR, 'section': section}, i18n('popular') % (section_label), thumb=utils.art('popular.png'), fanart=utils.art('fanart.jpg'))
+    if utils.menu_on('recent'): kodi.create_item({'mode': MODES.RECENT, 'section': section}, i18n('recently_updated') % (section_label), thumb=utils.art('recent.png'), fanart=utils.art('fanart.jpg'))
+    if utils.menu_on('mosts'): kodi.create_item({'mode': MODES.MOSTS, 'section': section}, i18n('mosts') % (section_label2), thumb=utils.art('mosts.png'), fanart=utils.art('fanart.jpg'))
+    add_section_lists(section)
+    if TOKEN:
+        if utils.menu_on('on_deck'): kodi.create_item({'mode': MODES.SHOW_BOOKMARKS, 'section': section}, i18n('trakt_on_deck'), thumb=utils.art('on_deck.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('recommended'): kodi.create_item({'mode': MODES.RECOMMEND, 'section': section}, i18n('recommended') % (section_label), thumb=utils.art('recommended.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('collection'): add_refresh_item({'mode': MODES.SHOW_COLLECTION, 'section': section}, i18n('my_collection') % (section_label2), utils.art('collection.png'), utils.art('fanart.jpg'))
+        if utils.menu_on('history'): kodi.create_item({'mode': MODES.SHOW_HISTORY, 'section': section}, i18n('watched_history'), thumb=utils.art('watched_history.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('favorites'): kodi.create_item({'mode': MODES.SHOW_FAVORITES, 'section': section}, i18n('my_favorites'), thumb=utils.art('my_favorites.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('subscriptions'): kodi.create_item({'mode': MODES.MANAGE_SUBS, 'section': section}, i18n('my_subscriptions'), thumb=utils.art('my_subscriptions.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('watchlist'): kodi.create_item({'mode': MODES.SHOW_WATCHLIST, 'section': section}, i18n('my_watchlist'), thumb=utils.art('my_watchlist.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('my_lists'): kodi.create_item({'mode': MODES.MY_LISTS, 'section': section}, i18n('my_lists'), thumb=utils.art('my_lists.png'), fanart=utils.art('fanart.jpg'))
+        if utils.menu_on('liked_lists'): add_refresh_item({'mode': MODES.LIKED_LISTS, 'section': section}, i18n('liked_lists'), utils.art('liked_lists.png'), utils.art('fanart.jpg'))
+    if utils.menu_on('other_lists'): kodi.create_item({'mode': MODES.OTHER_LISTS, 'section': section}, i18n('other_lists'), thumb=utils.art('other_lists.png'), fanart=utils.art('fanart.jpg'))
+    if section == SECTIONS.TV:
+        if TOKEN:
+            if utils.menu_on('progress'): add_refresh_item({'mode': MODES.SHOW_PROGRESS}, i18n('my_next_episodes'), utils.art('my_progress.png'), utils.art('fanart.jpg'))
+            if utils.menu_on('my_cal'): add_refresh_item({'mode': MODES.MY_CAL}, i18n('my_calendar'), utils.art('my_calendar.png'), utils.art('fanart.jpg'))
+        if utils.menu_on('general_cal'): add_refresh_item({'mode': MODES.CAL}, i18n('general_calendar'), utils.art('calendar.png'), utils.art('fanart.jpg'))
+        if utils.menu_on('premiere_cal'): add_refresh_item({'mode': MODES.PREMIERES}, i18n('premiere_calendar'), utils.art('premiere_calendar.png'), utils.art('fanart.jpg'))
+    if utils.menu_on('search'): kodi.create_item({'mode': MODES.SEARCH, 'section': section}, i18n('search'), thumb=utils.art(section_params['search_img']), fanart=utils.art('fanart.jpg'))
+    if utils.menu_on('search'): add_search_item({'mode': MODES.RECENT_SEARCH, 'section': section}, i18n('recent_searches'), utils.art(section_params['search_img']), MODES.CLEAR_RECENT)
+    if utils.menu_on('search'): add_search_item({'mode': MODES.SAVED_SEARCHES, 'section': section}, i18n('saved_searches'), utils.art(section_params['search_img']), MODES.CLEAR_SAVED)
+    kodi.end_of_directory()
+
 @url_dispatcher.register(MODES.SHOW_BOOKMARKS, ['section'])
 def view_bookmarks(section):
     section_params = utils.get_section_params(section)
@@ -184,38 +216,6 @@ def reset_base_url():
 def auto_conf():
     gui_utils.do_auto_config()
     
-@url_dispatcher.register(MODES.BROWSE, ['section'])
-def browse_menu(section):
-    section_params = utils.get_section_params(section)
-    section_label = section_params['label_plural']
-    section_label2 = section_params['label_single']
-    if utils.menu_on('trending'): kodi.create_item({'mode': MODES.TRENDING, 'section': section}, i18n('trending') % (section_label), thumb=utils.art('trending.png'), fanart=utils.art('fanart.jpg'))
-    if utils.menu_on('popular'): kodi.create_item({'mode': MODES.POPULAR, 'section': section}, i18n('popular') % (section_label), thumb=utils.art('popular.png'), fanart=utils.art('fanart.jpg'))
-    if utils.menu_on('recent'): kodi.create_item({'mode': MODES.RECENT, 'section': section}, i18n('recently_updated') % (section_label), thumb=utils.art('recent.png'), fanart=utils.art('fanart.jpg'))
-    if utils.menu_on('mosts'): kodi.create_item({'mode': MODES.MOSTS, 'section': section}, i18n('mosts') % (section_label2), thumb=utils.art('mosts.png'), fanart=utils.art('fanart.jpg'))
-    add_section_lists(section)
-    if TOKEN:
-        if utils.menu_on('on_deck'): kodi.create_item({'mode': MODES.SHOW_BOOKMARKS, 'section': section}, i18n('trakt_on_deck'), thumb=utils.art('on_deck.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('recommended'): kodi.create_item({'mode': MODES.RECOMMEND, 'section': section}, i18n('recommended') % (section_label), thumb=utils.art('recommended.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('collection'): add_refresh_item({'mode': MODES.SHOW_COLLECTION, 'section': section}, i18n('my_collection') % (section_label2), utils.art('collection.png'), utils.art('fanart.jpg'))
-        if utils.menu_on('history'): kodi.create_item({'mode': MODES.SHOW_HISTORY, 'section': section}, i18n('watched_history'), thumb=utils.art('watched_history.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('favorites'): kodi.create_item({'mode': MODES.SHOW_FAVORITES, 'section': section}, i18n('my_favorites'), thumb=utils.art('my_favorites.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('subscriptions'): kodi.create_item({'mode': MODES.MANAGE_SUBS, 'section': section}, i18n('my_subscriptions'), thumb=utils.art('my_subscriptions.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('watchlist'): kodi.create_item({'mode': MODES.SHOW_WATCHLIST, 'section': section}, i18n('my_watchlist'), thumb=utils.art('my_watchlist.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('my_lists'): kodi.create_item({'mode': MODES.MY_LISTS, 'section': section}, i18n('my_lists'), thumb=utils.art('my_lists.png'), fanart=utils.art('fanart.jpg'))
-        if utils.menu_on('liked_lists'): add_refresh_item({'mode': MODES.LIKED_LISTS, 'section': section}, i18n('liked_lists'), utils.art('liked_lists.png'), utils.art('fanart.jpg'))
-    if utils.menu_on('other_lists'): kodi.create_item({'mode': MODES.OTHER_LISTS, 'section': section}, i18n('other_lists'), thumb=utils.art('other_lists.png'), fanart=utils.art('fanart.jpg'))
-    if section == SECTIONS.TV:
-        if TOKEN:
-            if utils.menu_on('progress'): add_refresh_item({'mode': MODES.SHOW_PROGRESS}, i18n('my_next_episodes'), utils.art('my_progress.png'), utils.art('fanart.jpg'))
-            if utils.menu_on('my_cal'): add_refresh_item({'mode': MODES.MY_CAL}, i18n('my_calendar'), utils.art('my_calendar.png'), utils.art('fanart.jpg'))
-        if utils.menu_on('general_cal'): add_refresh_item({'mode': MODES.CAL}, i18n('general_calendar'), utils.art('calendar.png'), utils.art('fanart.jpg'))
-        if utils.menu_on('premiere_cal'): add_refresh_item({'mode': MODES.PREMIERES}, i18n('premiere_calendar'), utils.art('premiere_calendar.png'), utils.art('fanart.jpg'))
-    if utils.menu_on('search'): kodi.create_item({'mode': MODES.SEARCH, 'section': section}, i18n('search'), thumb=utils.art(section_params['search_img']), fanart=utils.art('fanart.jpg'))
-    if utils.menu_on('search'): add_search_item({'mode': MODES.RECENT_SEARCH, 'section': section}, i18n('recent_searches'), utils.art(section_params['search_img']), MODES.CLEAR_RECENT)
-    if utils.menu_on('search'): add_search_item({'mode': MODES.SAVED_SEARCHES, 'section': section}, i18n('saved_searches'), utils.art(section_params['search_img']), MODES.CLEAR_SAVED)
-    kodi.end_of_directory()
-
 def add_section_lists(section):
     main_list = []
     main_str = kodi.get_setting('%s_main' % (section))
