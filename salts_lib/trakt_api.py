@@ -105,7 +105,8 @@ class Trakt_API():
         url = '/users/likes/lists'
         params = {'limit': self.list_size}
         if page: params['page'] = page
-        return self.__call_trakt(url, params=params, cache_limit=4, cached=cached)
+        cache_limit = self.__get_cache_limit('lists', 'liked_at', cached=cached)
+        return self.__call_trakt(url, params=params, cache_limit=cache_limit, cached=cached)
 
     def add_to_list(self, section, slug, items):
         return self.__manage_list('add', section, slug, items)
