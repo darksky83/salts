@@ -523,13 +523,19 @@ def add_list_item(section, user_list, total_items=0):
     kodi.create_item(queries, user_list['name'], thumb=utils.art('list.png'), fanart=utils.art('fanart.jpg'), is_folder=True,
                      total_items=total_items, menu_items=menu_items, replace_menu=False)
 
-@url_dispatcher.register(MODES.LIKED_LISTS, ['section'])
-def browse_liked_lists(section):
-    liked_lists = trakt_api.get_liked_lists()
+@url_dispatcher.register(MODES.LIKED_LISTS, ['section'], ['page'])
+def browse_liked_lists(section, page=1):
+    liked_lists = trakt_api.get_liked_lists(page=page)
     total_items = len(liked_lists)
     for liked_list in liked_lists:
         list_item = (liked_list['list']['user']['username'], liked_list['list']['ids']['slug'])
         add_other_list_item(MODES.LIKED_LISTS, section, list_item, total_items)
+
+    query = {'mode': MODES.LIKED_LISTS, 'section': section}
+    if query and page and total_items >= int(kodi.get_setting('list_size')):
+        query['page'] = int(page) + 1
+        label = '%s >>' % (i18n('next_page'))
+        kodi.create_item(query, label, thumb=utils.art('nextpage.png'), fanart=utils.art('fanart.jpg'), is_folder=True)
     kodi.end_of_directory()
 
 @url_dispatcher.register(MODES.OTHER_LISTS, ['section'])
