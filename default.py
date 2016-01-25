@@ -31,6 +31,7 @@ from salts_lib.url_dispatcher import URL_Dispatcher
 from salts_lib.srt_scraper import SRT_Scraper
 from salts_lib.trakt_api import Trakt_API, TransientTraktError, TraktNotFoundError, TraktError, TraktAuthError
 from salts_lib import utils
+from salts_lib import utils2
 from salts_lib.trans_utils import i18n
 from salts_lib import log_utils
 from salts_lib import gui_utils
@@ -137,7 +138,7 @@ def view_bookmarks(section):
         pause_label = ''
         if kodi.get_setting('trakt_bookmark') == 'true':
             pause_label = '[COLOR blue]%.2f%%[/COLOR] %s ' % (bookmark['progress'], i18n('on'))
-        paused_at = time.strftime('%Y-%m-%d', time.localtime(utils.iso_2_utc(bookmark['paused_at'])))
+        paused_at = time.strftime('%Y-%m-%d', time.localtime(utils2.iso_2_utc(bookmark['paused_at'])))
         pause_label += '[COLOR deeppink]%s[/COLOR]' % (paused_at)
         label = '[%s] %s ' % (pause_label, label.decode('utf-8', 'replace'))
         liz.setLabel(label)
@@ -461,7 +462,7 @@ def show_history(section, page=1):
             liz.setLabel(label)
             
         label = liz.getLabel()
-        watched_at = time.strftime('%Y-%m-%d', time.localtime(utils.iso_2_utc(item['watched_at'])))
+        watched_at = time.strftime('%Y-%m-%d', time.localtime(utils2.iso_2_utc(item['watched_at'])))
         header = '[COLOR deeppink]%s[/COLOR]' % (watched_at)
         label = '[%s] %s' % (header, label.decode('utf-8', 'ignore'))
         liz.setLabel(label)
@@ -783,7 +784,7 @@ def show_progress():
         workers, progress = get_progress()
         for episode in progress:
             log_utils.log('Episode: Sort Keys: Tile: |%s| Last Watched: |%s| Percent: |%s%%| Completed: |%s|' % (episode['show']['title'], episode['last_watched_at'], episode['percent_completed'], episode['completed']), xbmc.LOGDEBUG)
-            first_aired_utc = utils.iso_2_utc(episode['episode']['first_aired'])
+            first_aired_utc = utils2.iso_2_utc(episode['episode']['first_aired'])
             if kodi.get_setting('show_unaired_next') == 'true' or first_aired_utc <= time.time():
                 show = episode['show']
                 fanart = show['images']['fanart']['full']
@@ -981,7 +982,7 @@ def browse_episodes(trakt_id, season):
     totalItems = len(episodes)
     now = time.time()
     for episode in episodes:
-        utc_air_time = utils.iso_2_utc(episode['first_aired'])
+        utc_air_time = utils2.iso_2_utc(episode['first_aired'])
         if kodi.get_setting('show_unaired') == 'true' or utc_air_time <= now:
             if kodi.get_setting('show_unknown') == 'true' or utc_air_time:
                 liz, liz_url = make_episode_item(show, episode)
@@ -1821,7 +1822,7 @@ def add_to_library(video_type, title, year, trakt_id):
                     if utils.show_requires_source(trakt_id):
                         require_source = True
                     else:
-                        if (episode['first_aired'] != None and utils.iso_2_utc(episode['first_aired']) <= time.time()) or (include_unknown and episode['first_aired'] == None):
+                        if (episode['first_aired'] != None and utils2.iso_2_utc(episode['first_aired']) <= time.time()) or (include_unknown and episode['first_aired'] == None):
                             require_source = False
                         else:
                             continue
@@ -2034,7 +2035,7 @@ def make_dir_from_cal(mode, start_date, days):
         episode = item['episode']
         show = item['show']
         fanart = show['images']['fanart']['full']
-        utc_secs = utils.iso_2_utc(episode['first_aired'])
+        utc_secs = utils2.iso_2_utc(episode['first_aired'])
         show_date = datetime.date.fromtimestamp(utc_secs)
 
         try: episode['watched'] = watched[show['ids']['trakt']][episode['season']][episode['number']]
@@ -2108,7 +2109,7 @@ def make_episode_item(show, episode, show_subs=True, menu_items=None):
     else:
         label = '%sx%s %s' % (episode['season'], episode['number'], episode['title'])
 
-    if 'first_aired' in episode: utc_air_time = utils.iso_2_utc(episode['first_aired'])
+    if 'first_aired' in episode: utc_air_time = utils2.iso_2_utc(episode['first_aired'])
     try: time_str = time.asctime(time.localtime(utc_air_time))
     except: time_str = i18n('unavailable')
 
