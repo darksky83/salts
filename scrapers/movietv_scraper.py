@@ -90,11 +90,18 @@ class MovieTV_Scraper(scraper.Scraper):
             for source in sources:
                 if not source.lower().startswith('http'): continue
                 stream_url = re.sub('&end=\d+', '', source)
-                stream_url += '|User-Agent=%s&Referer=%s' % (self._get_ua(), urllib.quote(url))
+                stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (self._get_ua(), urllib.quote(url), self.__get_stream_cookies())
                 hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': sources[source], 'views': None, 'rating': None, 'direct': True}
                 hosters.append(hoster)
 
         return hosters
+
+    def __get_stream_cookies(self):
+        cj = self._set_cookies(self.base_url, {})
+        cookies = []
+        for cookie in cj:
+            cookies.append('%s=%s' % (cookie.name, cookie.value))
+        return urllib.quote(';'.join(cookies))
 
     def get_url(self, video):
         return self._default_get_url(video)
