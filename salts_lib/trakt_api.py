@@ -75,8 +75,7 @@ class Trakt_API():
     def show_list(self, slug, section, username=None, auth=True, cached=True):
         if not username:
             username = 'me'
-            cache_limit = 0  # don't cache user's own lists at all
-            cached = False
+            cache_limit = self.__get_cache_limit('lists', 'updated_at', cached)
         else:
             cache_limit = 1  # cache other user's list for one hour
 
@@ -88,7 +87,8 @@ class Trakt_API():
     def show_watchlist(self, section):
         url = '/users/me/watchlist/%s' % (TRAKT_SECTIONS[section])
         params = {'extended': 'full,images'}
-        response = self.__call_trakt(url, params=params, cache_limit=0)
+        cache_limit = self.__get_cache_limit(TRAKT_SECTIONS[section], 'watchlisted_at', cached=True)
+        response = self.__call_trakt(url, params=params, cache_limit=cache_limit)
         return [item[TRAKT_SECTIONS[section][:-1]] for item in response]
 
     def get_list_header(self, slug, username=None, auth=True):
@@ -241,7 +241,9 @@ class Trakt_API():
     def get_collection(self, section, full=True, cached=True):
         url = '/users/me/collection/%s' % (TRAKT_SECTIONS[section])
         params = {'extended': 'full,images'} if full else None
-        response = self.__call_trakt(url, params=params, cached=cached)
+        media = 'movies' if section == SECTIONS.MOVIES else 'episodes'
+        cache_limit = self.__get_cache_limit(media, 'collected_at', cached)
+        response = self.__call_trakt(url, params=params, cache_limit=cache_limit, cached=cached)
         result = []
         for item in response:
             element = item[TRAKT_SECTIONS[section][:-1]]
@@ -334,7 +336,7 @@ class Trakt_API():
 
     def get_last_activity(self, media=None, activity=None):
         url = '/sync/last_activities'
-        result = self.__call_trakt(url, cache_limit=.02)
+        result = self.__call_trakt(url, cache_limit=.01)
         if media is not None and media in result:
             if activity is not None and activity in result[media]:
                 return result[media][activity]
