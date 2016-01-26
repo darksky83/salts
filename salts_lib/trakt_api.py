@@ -354,7 +354,7 @@ class Trakt_API():
         if cached:
             activity = self.get_last_activity(media, activity)
             cache_limit = (time.time() - utils2.iso_2_utc(activity))
-            log_utils.log('Now: %s Last: %s Last TS: %s Cache Limit: %s' % (time.time(), utils2.iso_2_utc(activity), activity, cache_limit), log_utils.LOGDEBUG)
+            log_utils.log('Now: %s Last: %s Last TS: %s Cache Limit: %.2fs (%.2fh)' % (time.time(), utils2.iso_2_utc(activity), activity, cache_limit, cache_limit / 60 / 60), log_utils.LOGDEBUG)
             cache_limit = cache_limit / 60 / 60
         else:
             cache_limit = 0
