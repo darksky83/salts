@@ -427,7 +427,7 @@ class DB_Connection():
     def attempt_db_recovery(self):
         header = i18n('recovery_header')
         if xbmcgui.Dialog().yesno(header, i18n('rec_mig_1'), i18n('rec_mig_2')):
-            try: self.init_database('0.0.0')
+            try: self.init_database('Unknown')
             except Exception as e:
                 log_utils.log('DB Migration Failed: %s' % (e), log_utils.LOGWARNING)
                 if self.db_type == DB_TYPES.SQLITE:
@@ -465,10 +465,12 @@ class DB_Connection():
                     self.db = None
                     self.__connect_to_db()
                 elif any(s for s in ['no such table', 'no such column'] if s in str(e)):
+                    self.db.rollback()
                     raise DatabaseRecoveryError(e)
                 else:
                     raise
             except DatabaseError as e:
+                self.db.rollback()
                 raise DatabaseRecoveryError(e)
 
     # purpose is to save the current db with an export, drop the db, recreate it, then connect to it
