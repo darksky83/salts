@@ -29,7 +29,7 @@ import scraper
 
 
 QUALITY_MAP = {'DVD': QUALITIES.HIGH, 'TS': QUALITIES.MEDIUM, 'CAM': QUALITIES.LOW}
-BASE_URL = 'http://www.merdb.mx'
+BASE_URL = 'http://www.merdb.club'
 
 class MerDB_Scraper(scraper.Scraper):
     base_url = BASE_URL
