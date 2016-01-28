@@ -21,8 +21,7 @@ import os
 import kodi
 import random
 import json
-from utils import reset_base_url
-from trans_utils import i18n
+from utils2 import reset_base_url, i18n
 from trakt_api import Trakt_API
 from salts_lib import log_utils
 

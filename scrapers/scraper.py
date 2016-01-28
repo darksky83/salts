@@ -35,7 +35,7 @@ import json
 import sys
 import random
 from salts_lib import log_utils
-from salts_lib.trans_utils import i18n
+from salts_lib.utils2 import i18n
 from salts_lib import cloudflare
 from salts_lib import pyaes
 from salts_lib.db_utils import DB_Connection
