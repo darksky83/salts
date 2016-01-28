@@ -33,7 +33,6 @@ import xbmcgui
 import xbmcplugin
 import kodi
 import strings
-from trans_utils import i18n
 from constants import *
 
 THEME_LIST = ['Shine', 'Luna_Blue', 'Iconic', 'Simple', 'SALTy', 'SALTy (Blended)', 'SALTy (Blue)', 'SALTy (Frog)', 'SALTy (Green)',

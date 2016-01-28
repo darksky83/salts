@@ -23,7 +23,7 @@ import xbmcvfs
 import xbmcgui
 import log_utils
 import kodi
-from trans_utils import i18n
+from utils2 import i18n
 
 def enum(**enums):
     return type('Enum', (), enums)

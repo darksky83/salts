@@ -17,7 +17,6 @@
 """
 import json
 import urllib2
-from urllib2 import HTTPError
 import urllib
 import socket
 import ssl

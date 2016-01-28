@@ -92,7 +92,7 @@ class Diziay_Scraper(scraper.Scraper):
         cj = self._set_cookies(self.base_url, {})
         cookies = {}
         for cookie in cj:
-            cookies[cookie.name] =cookie.value
+            cookies[cookie.name] = cookie.value
         return cookies
 
     def get_url(self, video):

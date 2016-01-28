@@ -22,7 +22,7 @@ import re
 import datetime
 from salts_lib import kodi
 from salts_lib import dom_parser
-from salts_lib.trans_utils import i18n
+from salts_lib.utils2 import i18n
 from salts_lib.constants import VIDEO_TYPES
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import SHORT_MONS

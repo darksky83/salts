@@ -17,7 +17,6 @@
 """
 import scraper
 import re
-import urllib
 import urlparse
 import time
 from salts_lib import kodi

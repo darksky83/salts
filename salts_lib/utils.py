@@ -25,7 +25,7 @@ import log_utils
 import kodi
 import utils2
 from constants import *
-from trans_utils import i18n
+from utils2 import i18n
 from trakt_api import Trakt_API
 from db_utils import DB_Connection
 import threading
