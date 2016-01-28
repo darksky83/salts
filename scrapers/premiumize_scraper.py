@@ -72,7 +72,7 @@ class Premiumize_Scraper(scraper.Scraper):
                     for video in videos:
                         host = self._get_direct_hostname(video['url'])
                         hoster = {'multi-part': False, 'class': self, 'views': None, 'url': video['url'], 'rating': None, 'host': host, 'quality': video['quality'], 'direct': True}
-                        if 'size' in video: hoster['size'] = self.__format_size(video['size'])
+                        if 'size' in video: hoster['size'] = scraper_utils.format_size(video['size'])
                         if 'name' in video: hoster['extra'] = video['name']
                         hosters.append(hoster)
                          
@@ -185,10 +185,3 @@ class Premiumize_Scraper(scraper.Scraper):
             js_result = {}
             
         return js_result
-        
-    def __format_size(self, num, suffix='B'):
-        for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
-            if abs(num) < 1024.0:
-                return "%3.1f%s%s" % (num, unit, suffix)
-            num /= 1024.0
-        return "%.1f%s%s" % (num, 'Y', suffix)

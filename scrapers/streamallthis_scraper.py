@@ -88,19 +88,9 @@ class Stream_Scraper(scraper.Scraper):
                     if 'videos' in js_data:
                         for video in js_data['videos']:
                             stream_url = video['url'] + '|Cookie=%s' % (self._get_stream_cookies())
-                            hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': self.__set_quality(video['key'][:-1]), 'views': None, 'rating': None, 'direct': True}
+                            hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': scraper_utils.height_get_quality(video['key']), 'views': None, 'rating': None, 'direct': True}
                             hosters.append(hoster)
         return hosters
-
-    def __set_quality(self, height):
-        height = int(height)
-        if height >= 720:
-            quality = QUALITIES.HD720
-        elif height >= 480:
-            quality = QUALITIES.HIGH
-        else:
-            quality = QUALITIES.MEDIUM
-        return quality
 
     def get_url(self, video):
         return self._default_get_url(video)

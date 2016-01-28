@@ -111,7 +111,7 @@ class EasyNews_Scraper(scraper.Scraper):
                 
                 stream_url = urllib.quote('%s%s/%s%s' % (post_hash, ext, post_title, ext))
                 stream_url = 'http://members.easynews.com/dl/%s' % (stream_url)
-                stream_url = stream_url + '|Cookie=%s' % (self.__get_cookies())
+                stream_url = stream_url + '|Cookie=%s' % (self._get_stream_cookies())
                 host = self._get_direct_hostname(stream_url)
                 quality = scraper_utils.width_get_quality(item['width'])
                 hoster = {'multi-part': False, 'class': self, 'views': None, 'url': stream_url, 'rating': None, 'host': host, 'quality': quality, 'direct': True}
@@ -154,12 +154,6 @@ class EasyNews_Scraper(scraper.Scraper):
         
         return self._cached_http_get(url, self.base_url, self.timeout, cookies=self.cookie, cache_limit=cache_limit)
 
-    def __get_cookies(self):
-        cookies = []
-        for key in self.cookie:
-            cookies.append('%s=%s' % (key, self.cookie[key]))
-        return urllib.quote_plus(';'.join(cookies))
-        
     def __translate_search(self, url):
         query = urllib.quote_plus(urlparse.parse_qs(urlparse.urlparse(url).query)['query'][0])
         url = urlparse.urljoin(self.base_url, SEARCH_URL % (query, query))
