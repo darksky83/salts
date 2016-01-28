@@ -91,27 +91,12 @@ class ClickPlay_Scraper(scraper.Scraper):
                         hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': quality, 'host': self._get_direct_hostname(source), 'rating': None, 'views': None, 'direct': True}
                         hosters.append(hoster)
                 if 'docs.google' in stream_url.lower():
-                    for source in self.__parse_fmt(stream_url):
+                    for source in self._parse_gdocs(stream_url):
                         quality = scraper_utils.gv_get_quality(source)
                         hoster = {'multi-part': False, 'url': source, 'class': self, 'quality': quality, 'host': self._get_direct_hostname(source), 'rating': None, 'views': None, 'direct': True}
                         hosters.append(hoster)
                 
         return hosters
-
-    def __parse_fmt(self, link):
-        urls = {}
-        html = self._http_get(link, cache_limit=.5)
-        for match in re.finditer('\[\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\]', html):
-            key, value = match.groups()
-            if key == 'fmt_stream_map':
-                items = value.split(',')
-                for item in items:
-                    source_fmt, source_url = item.split('|')
-                    source_url = source_url.replace('\\u003d', '=').replace('\\u0026', '&')
-                    source_url = urllib.unquote(source_url)
-                    urls[source_url] = source_fmt
-                    
-        return urls
 
     def get_url(self, video):
         return self._default_get_url(video)

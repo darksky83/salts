@@ -125,18 +125,11 @@ class WatchHD_Scraper(scraper.Scraper):
                             quality = scraper_utils.height_get_quality(match.group(1))
                         else:
                             quality = QUALITIES.HIGH
-                        stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), url, self.__get_stream_cookies())
+                        stream_url += '|User-Agent=%s&Referer=%s&Cookie=%s' % (scraper_utils.get_ua(), url, self._get_stream_cookies())
                         hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': views, 'rating': None, 'url': stream_url, 'direct': True}
                         hoster['title'] = title
                         hosters.append(hoster)
         return hosters
-
-    def __get_stream_cookies(self):
-        cj = self._set_cookies(self.base_url, {})
-        cookies = []
-        for cookie in cj:
-            cookies.append('%s=%s' % (cookie.name, cookie.value))
-        return urllib.quote(';'.join(cookies))
 
     def get_url(self, video):
         return self._default_get_url(video)

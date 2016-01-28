@@ -61,36 +61,12 @@ class AfdahOrg_Scraper(scraper.Scraper):
                 video_id = match.group(1)
                 data = {'video_id': video_id}
                 html = self._http_get(INFO_URL, data=data, cache_limit=.5)
-                sources = self.__parse_fmt(html)
-                for width in sources:
-                    hoster = {'multi-part': False, 'host': self._get_direct_hostname(sources[width]), 'class': self, 'quality': scraper_utils.width_get_quality(width), 'views': None, 'rating': None, 'url': sources[width], 'direct': True}
+                sources = self._parse_gdocs(html)
+                for source in sources:
+                    host = self._get_direct_hostname(source)
+                    hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': scraper_utils.gv_get_quality(source), 'views': None, 'rating': None, 'url': source, 'direct': True}
                     hosters.append(hoster)
         return hosters
-
-    def __parse_fmt(self, js_data):
-        urls = {}
-        formats = {}
-        for match in re.finditer('&?([^=]+)=([^&$]+)', js_data):
-            key, value = match.groups()
-            value = urllib.unquote(value)
-            if key == 'fmt_stream_map':
-                items = value.split(',')
-                for item in items:
-                    source_fmt, source_url = item.split('|')
-                    urls[source_url] = source_fmt
-            elif key == 'fmt_list':
-                items = value.split(',')
-                for item in items:
-                    format_key, q_str, _ = item.split('/', 2)
-                    w, _ = q_str.split('x')
-                    formats[format_key] = int(w)
-                    
-        sources = {}
-        for url in urls:
-            if urls[url] in formats:
-                width = formats[urls[url]]
-                sources[width] = url
-        return sources
 
     def get_url(self, video):
         return self._default_get_url(video)

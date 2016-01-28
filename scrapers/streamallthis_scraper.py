@@ -87,18 +87,10 @@ class Stream_Scraper(scraper.Scraper):
                     js_data = scraper_utils.parse_json(html, new_url)
                     if 'videos' in js_data:
                         for video in js_data['videos']:
-                            stream_url = video['url'] + '|Cookie=%s' % (self.__get_stream_cookies())
+                            stream_url = video['url'] + '|Cookie=%s' % (self._get_stream_cookies())
                             hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'url': stream_url, 'quality': self.__set_quality(video['key'][:-1]), 'views': None, 'rating': None, 'direct': True}
                             hosters.append(hoster)
         return hosters
-
-    def __get_stream_cookies(self):
-        cj = self._set_cookies(self.base_url, {})
-        cookies = []
-        for cookie in cj:
-            if 'mail.ru' in cookie.domain:
-                cookies.append('%s=%s' % (cookie.name, cookie.value))
-        return urllib.quote(';'.join(cookies))
 
     def __set_quality(self, height):
         height = int(height)

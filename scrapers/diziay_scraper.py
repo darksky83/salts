@@ -76,7 +76,7 @@ class Diziay_Scraper(scraper.Scraper):
                         subs = True
                     
                     sources = []
-                    for name, stream_url in self.__get_stream_cookies().items():
+                    for name, stream_url in self.__get_stream_cookies2().items():
                         if re.match('source_\d+p?', name):
                             sources.append(urllib.unquote(stream_url))
 
@@ -91,7 +91,7 @@ class Diziay_Scraper(scraper.Scraper):
     
         return hosters
 
-    def __get_stream_cookies(self):
+    def __get_stream_cookies2(self):
         cj = self._set_cookies(self.base_url, {})
         cookies = {}
         for cookie in cj:

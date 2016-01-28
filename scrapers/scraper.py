@@ -563,6 +563,28 @@ class Scraper(object):
 
         return sources
 
+    def _parse_gdocs(self, link):
+        urls = {}
+        html = self._http_get(link, cache_limit=.5)
+        for match in re.finditer('\[\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\]', html):
+            key, value = match.groups()
+            if key == 'fmt_stream_map':
+                items = value.split(',')
+                for item in items:
+                    source_fmt, source_url = item.split('|')
+                    source_url = source_url.replace('\\u003d', '=').replace('\\u0026', '&')
+                    source_url = urllib.unquote(source_url)
+                    urls[source_url] = source_fmt
+                    
+        return urls
+
+    def _get_stream_cookies(self):
+        cj = self._set_cookies(self.base_url, {})
+        cookies = []
+        for cookie in cj:
+            cookies.append('%s=%s' % (cookie.name, cookie.value))
+        return urllib.quote(';'.join(cookies))
+
     def create_db_connection(self):
         worker_id = threading.current_thread().ident
         # create a connection if we don't have one or it was created in a different worker

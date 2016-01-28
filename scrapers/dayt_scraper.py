@@ -63,7 +63,7 @@ class DayT_Scraper(scraper.Scraper):
             iframes = dom_parser.parse_dom(html, 'iframe', ret='src')
             for iframe_url in iframes:
                 if 'docs.google.com' in iframe_url:
-                    sources = self.__parse_fmt(iframe_url)
+                    sources = self._parse_gdocs(iframe_url)
                     break
                 elif 'banner' in iframe_url or not iframe_url.startswith('http'):
                     pass
@@ -77,21 +77,6 @@ class DayT_Scraper(scraper.Scraper):
                 hosters.append(hoster)
     
         return hosters
-
-    def __parse_fmt(self, link):
-        urls = {}
-        html = self._http_get(link, cache_limit=.5)
-        for match in re.finditer('\[\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\]', html):
-            key, value = match.groups()
-            if key == 'fmt_stream_map':
-                items = value.split(',')
-                for item in items:
-                    source_fmt, source_url = item.split('|')
-                    source_url = source_url.replace('\\u003d', '=').replace('\\u0026', '&')
-                    source_url = urllib.unquote(source_url)
-                    urls[source_url] = source_fmt
-                    
-        return urls
 
     def get_url(self, video):
         return self._default_get_url(video)
