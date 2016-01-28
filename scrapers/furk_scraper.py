@@ -188,6 +188,7 @@ class Furk_Scraper(scraper.Scraper):
                     js_result = self._http_get(url, data=data, retry=False, allow_redirect=allow_redirect, cache_limit=0)
                 else:
                     log_utils.log('Invalid JSON returned: %s: %s' % (url, result), log_utils.LOGWARNING)
+                    js_result = {}
             else:
                 if js_result['status'] == 'error':
                     if retry and js_result['error'] == 'access denied':
@@ -196,8 +197,9 @@ class Furk_Scraper(scraper.Scraper):
                         js_result = self._http_get(url, data=data, retry=False, allow_redirect=allow_redirect, cache_limit=0)
                     else:
                         log_utils.log('Error received from furk.net (%s)' % (js_result['error']), log_utils.LOGWARNING)
+                        js_result = {}
             
-            return js_result
+        return js_result
         
     def __login(self):
         url = urlparse.urljoin(self.base_url, LOGIN_URL)
