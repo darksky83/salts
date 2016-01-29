@@ -310,14 +310,6 @@ def scraper_settings():
     COLORS = ['green', 'limegreen', 'greenyellow', 'yellowgreen', 'yellow', 'orange', 'darkorange', 'orangered', 'red', 'darkred']
     fail_limit = int(kodi.get_setting('disable-limit'))
     
-    base_cx = []
-    queries = {'mode': MODES.MOVE_TO, 'name': ''}
-    base_cx.append([i18n('move_to'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
-    queries = {'mode': MODES.RESET_FAILS, 'name': ''}
-    base_cx.append([i18n('reset_fails'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
-    queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': ''}
-    base_cx.append(['', 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
-    
     for i, cls in enumerate(scrapers):
         name = cls.get_name()
         label = '%s (Provides: %s)' % (name, str(list(cls.provides())).replace("'", ""))
@@ -338,19 +330,21 @@ def scraper_settings():
             
         label = '%s. %s [COLOR %s][FL: %s][/COLOR]:' % (i + 1, label, COLORS[index], failures)
 
-        menu_items = base_cx[:]
-        for item in menu_items:
-            if 'name' in item: item['name'] = name
-            
-        if i < len(scrapers) - 1:
-            queries = {'mode': MODES.MOVE_SCRAPER, 'name': name, 'direction': DIRS.DOWN, 'other': scrapers[i + 1].get_name()}
-            menu_items.insert(0, [i18n('move_down'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
+        menu_items = []
         if i > 0:
-            queries = {'mode': MODES.MOVE_SCRAPER, 'name': name, 'direction': DIRS.UP, 'other': scrapers[i - 1].get_name()}
-            menu_items.insert(0, [i18n('move_up'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
-        menu_items[-1][0] = toggle_label
-
+            queries = {'mode': MODES.MOVE_SCRAPER, 'name': cls.get_name(), 'direction': DIRS.UP, 'other': scrapers[i - 1].get_name()}
+            menu_items.append((i18n('move_up'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+        if i < len(scrapers) - 1:
+            queries = {'mode': MODES.MOVE_SCRAPER, 'name': cls.get_name(), 'direction': DIRS.DOWN, 'other': scrapers[i + 1].get_name()}
+            menu_items.append((i18n('move_down'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+        queries = {'mode': MODES.MOVE_TO, 'name': cls.get_name()}
+        menu_items.append((i18n('move_to'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+        queries = {'mode': MODES.RESET_FAILS, 'name': cls.get_name()}
+        menu_items.append((i18n('reset_fails'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+        queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': cls.get_name()}
+        menu_items.append((toggle_label, 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
         queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': name}
+        
         kodi.create_item(queries, label, thumb=utils2.art('scraper.png'), fanart=utils2.art('fanart.jpg'), is_folder=False,
                          is_playable=False, menu_items=menu_items, replace_menu=True)
     kodi.end_of_directory()

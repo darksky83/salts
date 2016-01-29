@@ -284,11 +284,12 @@
          <setting id="IceFilms-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="IceFilms_last_results" type="number" default="0" visible="false"/>
          <setting id="IFlix-enable" type="bool" label="IFlix Enabled" default="true" visible="true"/>
-         <setting id="IFlix-base_url" type="text" label="    Base Url" default="" visible="eq(-1,true)"/>
+         <setting id="IFlix-base_url" type="text" label="    Base Url" default="http://cnfstudio.com" visible="eq(-1,true)"/>
          <setting id="IFlix-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="IFlix_last_results" type="number" default="0" visible="false"/>
-         <setting id="IFlix-scraper_url" type="text" label="    Scraper Download Url" default="" visible="eq(-4,true)"/>
-         <setting id="IFlix-scraper_password" type="text" label="    Scraper Decryption Key" option="hidden" default="" visible="eq(-5,true)"/>
+         <setting id="IFlix-base_url2" type="text" label="    TV Shows Base Url" default="http://tvshows.cnfstudio.com" visible="eq(-4,true)"/>
+         <setting id="IFlix-scraper_url" type="text" label="    Scraper Download Url" default="" visible="eq(-5,true)"/>
+         <setting id="IFlix-scraper_password" type="text" label="    Scraper Decryption Key" option="hidden" default="" visible="eq(-6,true)"/>
          <setting id="iWatchOnline-enable" type="bool" label="iWatchOnline Enabled" default="true" visible="true"/>
          <setting id="iWatchOnline-base_url" type="text" label="    Base Url" default="https://www.iwatchonline.ag" visible="eq(-1,true)"/>
          <setting id="iWatchOnline-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -391,11 +392,13 @@
          <setting id="NoobRoom-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
          <setting id="NoobRoom-include_premium" type="bool" label="     Include Premium" default="false" visible="eq(-6,true)"/>
          <setting id="OCW-enable" type="bool" label="OCW Enabled" default="true" visible="true"/>
-         <setting id="OCW-base_url" type="text" label="    Base Url" default="" visible="eq(-1,true)"/>
-         <setting id="OCW-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="OCW-base_url" type="text" label="    Base Url" default="http://oneclickwatch.ws" visible="eq(-1,true)"/>
+         <setting id="OCW-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="OCW_last_results" type="number" default="0" visible="false"/>
-         <setting id="OCW-scraper_url" type="text" label="    Scraper Download Url" default="" visible="eq(-4,true)"/>
-         <setting id="OCW-scraper_password" type="text" label="    Scraper Decryption Key" option="hidden" default="" visible="eq(-5,true)"/>
+         <setting id="OCW-filter" type="slider" range="0,180" option="int" label="     Filter results older than (0=No Filter) (days)" default="30" visible="eq(-4,true)"/>
+         <setting id="OCW-select" type="enum" label="     Automatically Select" lvalues="30636|30637" default="0" visible="eq(-5,true)"/>
+         <setting id="OCW-scraper_url" type="text" label="    Scraper Download Url" default="" visible="eq(-6,true)"/>
+         <setting id="OCW-scraper_password" type="text" label="    Scraper Decryption Key" option="hidden" default="" visible="eq(-7,true)"/>
          <setting id="OneClickTVShows-enable" type="bool" label="OneClickTVShows Enabled" default="true" visible="true"/>
          <setting id="OneClickTVShows-base_url" type="text" label="    Base Url" default="http://oneclicktvshows.com" visible="eq(-1,true)"/>
          <setting id="OneClickTVShows-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
