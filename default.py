@@ -332,17 +332,17 @@ def scraper_settings():
 
         menu_items = []
         if i > 0:
-            queries = {'mode': MODES.MOVE_SCRAPER, 'name': cls.get_name(), 'direction': DIRS.UP, 'other': scrapers[i - 1].get_name()}
-            menu_items.append((i18n('move_up'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+            queries = {'mode': MODES.MOVE_SCRAPER, 'name': name, 'direction': DIRS.UP, 'other': scrapers[i - 1].get_name()}
+            menu_items.append([i18n('move_up'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
         if i < len(scrapers) - 1:
-            queries = {'mode': MODES.MOVE_SCRAPER, 'name': cls.get_name(), 'direction': DIRS.DOWN, 'other': scrapers[i + 1].get_name()}
-            menu_items.append((i18n('move_down'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
-        queries = {'mode': MODES.MOVE_TO, 'name': cls.get_name()}
-        menu_items.append((i18n('move_to'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
-        queries = {'mode': MODES.RESET_FAILS, 'name': cls.get_name()}
-        menu_items.append((i18n('reset_fails'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
-        queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': cls.get_name()}
-        menu_items.append((toggle_label, 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+            queries = {'mode': MODES.MOVE_SCRAPER, 'name': name, 'direction': DIRS.DOWN, 'other': scrapers[i + 1].get_name()}
+            menu_items.append([i18n('move_down'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
+        queries = {'mode': MODES.MOVE_TO, 'name': name}
+        menu_items.append([i18n('move_to'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
+        queries = {'mode': MODES.RESET_FAILS, 'name': name}
+        menu_items.append([i18n('reset_fails'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
+        queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': name}
+        menu_items.append([toggle_label, 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
         queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': name}
         
         kodi.create_item(queries, label, thumb=utils2.art('scraper.png'), fanart=utils2.art('fanart.jpg'), is_folder=False,

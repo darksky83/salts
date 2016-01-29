@@ -340,13 +340,13 @@ def get_sort_key(item):
             if field in item:
                 item_sort_key.append(sign * bool(item[field]))
             else:
-                item_sort_key.append(sign * -1)
+                item_sort_key.append(0)
         else:
             if item[field] is None:
                 item_sort_key.append(sign * -1)
             else:
                 item_sort_key.append(sign * int(item[field]))
-    # print 'item: %s sort_key: %s' % (item, item_sort_key)
+    # log_utils.log('item: %s sort_key: %s' % (item, item_sort_key), log_utils.LOGDEBUG)
     return tuple(item_sort_key)
 
 def make_source_sort_string(sort_key):
