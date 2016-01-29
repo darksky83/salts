@@ -145,10 +145,10 @@ def get_source_sort_key(item):
     sort_key = make_source_sort_key()
     return -sort_key[item.get_name()]
 
-def parallel_get_progress(q, trakt_id, cached):
+def parallel_get_progress(q, trakt_id, cached, cache_limit):
     worker = threading.current_thread()
     log_utils.log('Worker: %s (%s) for %s progress' % (worker.name, worker, trakt_id), log_utils.LOGDEBUG)
-    progress = trakt_api.get_show_progress(trakt_id, full=True, cached=cached)
+    progress = trakt_api.get_show_progress(trakt_id, full=True, cached=cached, cache_limit=cache_limit)
     progress['trakt'] = trakt_id  # add in a hacked show_id to be used to match progress up to the show its for
     log_utils.log('Got progress for %s from %s' % (trakt_id, worker), log_utils.LOGDEBUG)
     q.put(progress)

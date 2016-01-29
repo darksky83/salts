@@ -701,8 +701,13 @@ def show_collection(section):
     make_dir_from_list(section, items, COLLECTION_SLUG)
 
 def get_progress(cached=True):
+    if cached:
+        in_cache, result = db_connection.get_cached_function(get_progress.__name__, cache_limit=15 * 60)
+        if in_cache:
+            return [], utils2.sort_progress(result, sort_order=SORT_MAP[int(kodi.get_setting('sort_progress'))])
+        
     timeout = max_timeout = int(kodi.get_setting('trakt_timeout'))
-    progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, cached=False)
+    progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, cached=cached)
     if kodi.get_setting('include_watchlist_next') == 'true':
         watchlist = trakt_api.show_watchlist(SECTIONS.TV)
         watchlist = [{'show': item, 'last_watched_at': None} for item in watchlist]
@@ -728,7 +733,7 @@ def get_progress(cached=True):
             log_utils.log('Skipping %s (%s) as cached MNE ended exclusion' % (trakt_id, show['show']['title']), log_utils.LOGDEBUG)
             continue
         
-        worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, False])
+        worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, cached, .08])
         worker_count += 1
         workers.append(worker)
         # create a shows dictionary to be used during progress building
@@ -770,8 +775,11 @@ def get_progress(cached=True):
         timeout_msg = i18n('progress_timeouts') % (worker_count, total)
         kodi.notify(msg=timeout_msg, duration=5000)
         log_utils.log(timeout_msg, xbmc.LOGWARNING)
+    else:
+        # only cache the results if all results were successful
+        db_connection.cache_function(get_progress.__name__, result=episodes)
+        
     workers = utils2.reap_workers(workers)
-    
     return workers, utils2.sort_progress(episodes, sort_order=SORT_MAP[int(kodi.get_setting('sort_progress'))])
 
 @url_dispatcher.register(MODES.SHOW_PROGRESS)
