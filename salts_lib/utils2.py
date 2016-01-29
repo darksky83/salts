@@ -439,7 +439,7 @@ def test_stream(hoster):
 
 def scraper_enabled(name):
     # return true if setting exists and set to true, or setting doesn't exist (i.e. '')
-    return kodi.get_setting('%s-enable' % (name)) in ['true', '']
+    return kodi.get_setting('%s-enable' % (name)) in ('true', '')
 
 def set_view(content, set_sort):
     # set content type so library shows more views and info
