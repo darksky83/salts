@@ -19,6 +19,8 @@ import os
 import time
 import csv
 import json
+import hashlib
+import cPickle
 import xbmcvfs
 import xbmcgui
 import log_utils
@@ -36,6 +38,7 @@ CSV_MARKERS = enum(REL_URL='***REL_URL***', OTHER_LISTS='***OTHER_LISTS***', SAV
 MAX_TRIES = 5
 MYSQL_DATA_SIZE = 512
 MYSQL_URL_SIZE = 255
+MYSQL_MAX_BLOB_SIZE = 16777215
 
 class DB_Connection():
     def __init__(self):
@@ -153,6 +156,31 @@ class DB_Connection():
         rows = self.__execute(sql)
         return rows
 
+    def cache_function(self, name, args=None, kwargs=None, result=None):
+        now = time.time()
+        if args is None: args = []
+        if kwargs is None: kwargs = {}
+        js_result = cPickle.dumps(result)
+        if self.db_type == DB_TYPES.MYSQL and len(js_result) > MYSQL_MAX_BLOB_SIZE:
+            return
+
+        arg_hash = hashlib.md5(str(args)).hexdigest() + hashlib.md5(str(kwargs)).hexdigest()
+        sql = 'REPLACE INTO function_cache (name, args, result, timestamp) VALUES(?, ?, ?, ?)'
+        self.__execute(sql, (name, arg_hash, js_result, now))
+
+    def get_cached_function(self, name, args=None, kwargs=None, cache_limit=60 * 60):
+        max_age = time.time() - cache_limit
+        if args is None: args = []
+        if kwargs is None: kwargs = {}
+        arg_hash = hashlib.md5(str(args)).hexdigest() + hashlib.md5(str(kwargs)).hexdigest()
+        sql = 'SELECT result FROM function_cache WHERE name = ? and args = ? and timestamp >= ?'
+        rows = self.__execute(sql, (name, arg_hash, max_age))
+        if rows:
+            log_utils.log('Function Cache Hit: |%s|%s|%s| -> |%d|' % (name, args, kwargs, len(rows[0][0])), log_utils.LOGDEBUG)
+            return True, cPickle.loads(rows[0][0])
+        else:
+            return False, None
+        
     def add_other_list(self, section, username, slug, name=None):
         sql = 'REPLACE INTO other_lists (section, username, slug, name) VALUES (?, ?, ?, ?)'
         self.__execute(sql, (section, username, slug, name))
@@ -366,6 +394,7 @@ class DB_Connection():
                 self.__create_sqlite_db()
                 self.__execute('PRAGMA journal_mode=WAL')
                 self.__execute('CREATE TABLE IF NOT EXISTS url_cache (url VARCHAR(255) NOT NULL, data VARCHAR(255), response, res_header, timestamp, PRIMARY KEY(url, data))')
+                self.__execute('CREATE TABLE IF NOT EXISTS function_cache (name VARCHAR(255) NOT NULL, args VARCHAR(64), result, timestamp, PRIMARY KEY(name, args))')
                 self.__execute('CREATE TABLE IF NOT EXISTS db_info (setting VARCHAR(255), value TEXT, PRIMARY KEY(setting))')
                 self.__execute('CREATE TABLE IF NOT EXISTS rel_url \
                 (video_type TEXT NOT NULL, title TEXT NOT NULL, year TEXT NOT NULL, season TEXT NOT NULL, episode TEXT NOT NULL, source TEXT NOT NULL, rel_url TEXT, \
