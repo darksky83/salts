@@ -442,8 +442,7 @@ def browse_recommendations(section):
 def show_history(section, page=1):
     section_params = utils2.get_section_params(section)
     folder = kodi.get_setting('source-win') == 'Directory' and kodi.get_setting('auto-play') == 'false'
-    cached_watched = kodi.get_setting('cache_watched') == 'true'
-    history = trakt_api.get_history(section, full=True, page=page, cached=cached_watched)
+    history = trakt_api.get_history(section, full=True, page=page)
     totalItems = len(history)
     for item in history:
         if section == SECTIONS.MOVIES:
@@ -682,7 +681,7 @@ def show_watchlist(section):
 
 @url_dispatcher.register(MODES.SHOW_COLLECTION, ['section'])
 def show_collection(section):
-    items = trakt_api.get_collection(section, cached=kodi.get_setting('cache_collection') == 'true')
+    items = trakt_api.get_collection(section)
     sort_key = int(kodi.get_setting('sort_collection'))
     if sort_key == 1:
         items.reverse()
@@ -701,10 +700,9 @@ def show_collection(section):
 
     make_dir_from_list(section, items, COLLECTION_SLUG)
 
-def get_progress(cache_override=False):
-    cached = kodi.get_setting('cache_watched') == 'true' and not cache_override
+def get_progress(cached=True):
     timeout = max_timeout = int(kodi.get_setting('trakt_timeout'))
-    progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, cached=cached)
+    progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, cached=False)
     if kodi.get_setting('include_watchlist_next') == 'true':
         watchlist = trakt_api.show_watchlist(SECTIONS.TV)
         watchlist = [{'show': item, 'last_watched_at': None} for item in watchlist]
@@ -730,7 +728,7 @@ def get_progress(cache_override=False):
             log_utils.log('Skipping %s (%s) as cached MNE ended exclusion' % (trakt_id, show['show']['title']), log_utils.LOGDEBUG)
             continue
         
-        worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, cached])
+        worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, False])
         worker_count += 1
         workers.append(worker)
         # create a shows dictionary to be used during progress building
@@ -958,7 +956,7 @@ def browse_seasons(trakt_id, fanart):
     seasons = sorted(trakt_api.get_seasons(trakt_id), key=lambda x: x['number'])
     info = {}
     if TOKEN:
-        progress = trakt_api.get_show_progress(trakt_id, hidden=True, specials=True, cached=kodi.get_setting('cache_watched') == 'true')
+        progress = trakt_api.get_show_progress(trakt_id, hidden=True, specials=True)
         info = utils2.make_seasons_info(progress)
 
     total_items = len(seasons)
@@ -976,7 +974,7 @@ def browse_episodes(trakt_id, season):
     show = trakt_api.get_show_details(trakt_id)
     episodes = trakt_api.get_episodes(trakt_id, season)
     if TOKEN:
-        progress = trakt_api.get_show_progress(trakt_id, hidden=True, specials=True, cached=kodi.get_setting('cache_watched') == 'true')
+        progress = trakt_api.get_show_progress(trakt_id, hidden=True, specials=True)
         episodes = utils2.make_episodes_watched(episodes, progress)
 
     totalItems = len(episodes)
@@ -1948,17 +1946,16 @@ def make_dir_from_list(section, list_data, slug=None, query=None, page=None):
     section_params = utils2.get_section_params(section)
     totalItems = len(list_data)
 
-    cache_watched = kodi.get_setting('cache_watched') == 'true'
     watched = {}
     in_collection = {}
     if TOKEN:
-        watched_history = trakt_api.get_watched(section, cached=cache_watched)
+        watched_history = trakt_api.get_watched(section)
         for item in watched_history:
             if section == SECTIONS.MOVIES:
                 watched[item['movie']['ids']['trakt']] = item['plays'] > 0
             else:
                 watched[item['show']['ids']['trakt']] = len([e for s in item['seasons'] if s['number'] != 0 for e in s['episodes']])
-        collection = trakt_api.get_collection(section, full=False, cached=kodi.get_setting('cache_collection') == 'true')
+        collection = trakt_api.get_collection(section, full=False)
         in_collection = dict.fromkeys([show['ids']['trakt'] for show in collection], True)
 
     for show in list_data:
@@ -2017,10 +2014,9 @@ def make_dir_from_cal(mode, start_date, days):
     label = '<< %s' % (i18n('previous_week'))
     kodi.create_item({'mode': mode, 'start_date': last_str}, label, thumb=utils2.art('previous.png'), fanart=utils2.art('fanart.jpg'), is_folder=True)
 
-    cache_watched = kodi.get_setting('cache_watched') == 'true'
     watched = {}
     if TOKEN:
-        watched_history = trakt_api.get_watched(SECTIONS.TV, cached=cache_watched)
+        watched_history = trakt_api.get_watched(SECTIONS.TV)
         for item in watched_history:
             trakt_id = item['show']['ids']['trakt']
             watched[trakt_id] = {}

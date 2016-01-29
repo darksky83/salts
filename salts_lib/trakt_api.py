@@ -278,7 +278,8 @@ class Trakt_API():
         if full: params['extended'] = 'full,images'
         if hidden: params['hidden'] = 'true'
         if specials: params['specials'] = 'true'
-        return self.__call_trakt(url, params=params, cached=cached)
+        cache_limit = self.__get_cache_limit('episodes', 'watched_at', cached)
+        return self.__call_trakt(url, params=params, cache_limit=cache_limit, cached=cached)
 
     def get_hidden_progress(self, cached=True):
         url = '/users/hidden/progress_watched'
