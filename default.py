@@ -257,7 +257,7 @@ def force_refresh(refresh_mode, section=None, slug=None, username=None):
         trakt_api.get_collection(section, cached=False)
     elif refresh_mode == MODES.SHOW_PROGRESS:
         try:
-            workers, _ = get_progress(cache_override=True)
+            workers, _ = get_progress(cached=False)
         finally:
             utils2.reap_workers(workers, None)
     elif refresh_mode == MODES.MY_CAL:
