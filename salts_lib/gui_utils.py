@@ -25,7 +25,6 @@ from utils2 import reset_base_url, i18n
 from trakt_api import Trakt_API
 from salts_lib import log_utils
 
-ICON_PATH = os.path.join(kodi.get_path(), 'icon.png')
 use_https = kodi.get_setting('use_https') == 'true'
 trakt_timeout = int(kodi.get_setting('trakt_timeout'))
 

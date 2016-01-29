@@ -15,7 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import os
 import time
 import _strptime
 import datetime
@@ -25,13 +24,11 @@ import log_utils
 import kodi
 import utils2
 from constants import *
-from utils2 import i18n
 from trakt_api import Trakt_API
 from db_utils import DB_Connection
 import threading
 from scrapers import *  # import all scrapers into this namespace
 
-ICON_PATH = os.path.join(kodi.get_path(), 'icon.png')
 _db_connection = None
 last_check = datetime.datetime.fromtimestamp(0)
 TOKEN = kodi.get_setting('trakt_oauth_token')
@@ -52,11 +49,11 @@ def choose_list(username=None):
     if username is None: lists.insert(0, {'name': 'watchlist', 'ids': {'slug': WATCHLIST_SLUG}})
     if lists:
         dialog = xbmcgui.Dialog()
-        index = dialog.select(i18n('pick_a_list'), [list_data['name'] for list_data in lists])
+        index = dialog.select(utils2.i18n('pick_a_list'), [list_data['name'] for list_data in lists])
         if index > -1:
             return lists[index]['ids']['slug']
     else:
-        kodi.notify(msg=i18n('no_lists_for_user') % (username), duration=5000)
+        kodi.notify(msg=utils2.i18n('no_lists_for_user') % (username), duration=5000)
 
 def make_info(item, show=None, people=None):
     if people is None: people = {}
@@ -226,12 +223,12 @@ def bookmark_exists(trakt_id, season, episode):
 def get_resume_choice(trakt_id, season, episode):
     if kodi.get_setting('trakt_bookmark') == 'true':
         resume_point = '%s%%' % (trakt_api.get_bookmark(trakt_id, season, episode))
-        header = i18n('trakt_bookmark_exists')
+        header = utils2.i18n('trakt_bookmark_exists')
     else:
         resume_point = utils2.format_time(_get_db_connection().get_bookmark(trakt_id, season, episode))
-        header = i18n('local_bookmark_exists')
-    question = i18n('resume_from') % (resume_point)
-    return xbmcgui.Dialog().yesno(header, question, '', '', i18n('start_from_beginning'), i18n('resume')) == 1
+        header = utils2.i18n('local_bookmark_exists')
+    question = utils2.i18n('resume_from') % (resume_point)
+    return xbmcgui.Dialog().yesno(header, question, '', '', utils2.i18n('start_from_beginning'), utils2.i18n('resume')) == 1
 
 def get_bookmark(trakt_id, season, episode):
     if kodi.get_setting('trakt_bookmark') == 'true':
@@ -283,17 +280,16 @@ def do_disable_check():
         if fails >= disable_limit:
             if auto_disable == DISABLE_SETTINGS.ON:
                 kodi.set_setting('%s-enable' % (cls.get_name()), 'false')
-                kodi.notify(msg='[COLOR blue]%s[/COLOR] %s' % (cls.get_name(), i18n('scraper_disabled')), duration=5000)
+                kodi.notify(msg='[COLOR blue]%s[/COLOR] %s' % (cls.get_name(), utils2.i18n('scraper_disabled')), duration=5000)
                 kodi.set_setting(setting, '0')
             elif auto_disable == DISABLE_SETTINGS.PROMPT:
                 dialog = xbmcgui.Dialog()
-                line1 = i18n('disable_line1') % (cls.get_name(), fails)
-                line2 = i18n('disable_line2')
-                line3 = i18n('disable_line3')
-                ret = dialog.yesno('SALTS', line1, line2, line3, i18n('keep_enabled'), i18n('disable_it'))
+                line1 = utils2.i18n('disable_line1') % (cls.get_name(), fails)
+                line2 = utils2.i18n('disable_line2')
+                line3 = utils2.i18n('disable_line3')
+                ret = dialog.yesno('SALTS', line1, line2, line3, utils2.i18n('keep_enabled'), utils2.i18n('disable_it'))
                 if ret:
                     kodi.set_setting('%s-enable' % (cls.get_name()), 'false')
                     kodi.set_setting(setting, '0')
                 else:
                     kodi.set_setting(setting, '-1')
-

@@ -309,7 +309,7 @@
          <setting id="LosMovies-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="LosMovies_last_results" type="number" default="0" visible="false"/>
          <setting id="MerDB-enable" type="bool" label="MerDB Enabled" default="true" visible="true"/>
-         <setting id="MerDB-base_url" type="text" label="    Base Url" default="http://www.merdb.mx" visible="eq(-1,true)"/>
+         <setting id="MerDB-base_url" type="text" label="    Base Url" default="http://www.merdb.club" visible="eq(-1,true)"/>
          <setting id="MerDB-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MerDB_last_results" type="number" default="0" visible="false"/>
          <setting id="MintMovies-enable" type="bool" label="MintMovies Enabled" default="true" visible="true"/>
