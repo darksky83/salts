@@ -404,7 +404,7 @@ def toggle_scrapers():
 
     new_toggle = 'false' if cur_toggle == 'true' else 'true'
     kodi.set_setting('toggle_enable', new_toggle)
-    # xbmc.executebuiltin("XBMC.Container.Refresh")
+    xbmc.executebuiltin("XBMC.Container.Refresh")
 
 @url_dispatcher.register(MODES.TOGGLE_SCRAPER, ['name'])
 def toggle_scraper(name):
