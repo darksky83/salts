@@ -24,6 +24,7 @@ from salts_lib import scraper_utils
 from salts_lib import log_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import VIDEO_TYPES
+from salts_lib.constants import XHR
 import scraper
 
 
@@ -55,13 +56,15 @@ class AfdahOrg_Scraper(scraper.Scraper):
         source_url = self.get_url(video)
         hosters = []
         if source_url and source_url != FORCE_NO_MATCH:
-            url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=.5)
+            page_url = urlparse.urljoin(self.base_url, source_url)
+            html = self._http_get(page_url, cache_limit=.5)
             match = re.search('var\s*video_id="([^"]+)', html)
             if match:
                 video_id = match.group(1)
                 data = {'v': video_id}
-                html = self._http_get(INFO_URL, data=data, cache_limit=.5)
+                headers = XHR
+                headers['Referer'] = page_url
+                html = self._http_get(INFO_URL, data=data, headers=headers, cache_limit=.5)
                 sources = scraper_utils.parse_json(html, INFO_URL)
                 for source in sources:
                     match = re.search('url=(.*)', sources[source])
