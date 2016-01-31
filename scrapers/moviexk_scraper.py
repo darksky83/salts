@@ -65,13 +65,11 @@ class MoxieXK_Scraper(scraper.Scraper):
                     if movie_url:
                         url = urlparse.urljoin(self.base_url, movie_url[0])
                         html = self._http_get(url, cache_limit=.5)
-                        log_utils.log(self.__get_episodes(html))
                         episodes = self.__get_episodes(html)
                         url = self.__get_best_page(episodes)
                         if not url:
                             return sources
                         else:
-                            log_utils.log(url)
                             url = urlparse.urljoin(self.base_url, url)
                             html = self._http_get(url, cache_limit=.5)
             
@@ -101,15 +99,13 @@ class MoxieXK_Scraper(scraper.Scraper):
     def __get_best_page(self, episodes):
         if 'EPTRAILER' in episodes: del episodes['EPTRAILER']
         if 'EPCAM' in episodes: del episodes['EPCAM']
-        if len(episodes) == 1:
+        qualities = ['EPHD1080P', 'EPHD720P', 'EPHD', 'EPFULL']
+        for q in qualities:
+            if q in episodes:
+                return episodes[q]
+            
+        if len(episodes) > 0:
             return episodes.items()[0][1]
-        else:
-            if 'EPHD' in episodes:
-                return episodes['EPHD']
-            elif 'EPFULL' in episodes:
-                return episodes['EPFULL']
-            else:
-                episodes.items()[0][1]
         
     def __get_episodes(self, html):
         labels = dom_parser.parse_dom(html, 'a', {'data-type': 'watch'})
