@@ -65,6 +65,15 @@ class MoxieXK_Scraper(scraper.Scraper):
                     if movie_url:
                         url = urlparse.urljoin(self.base_url, movie_url[0])
                         html = self._http_get(url, cache_limit=.5)
+                        log_utils.log(self.__get_episodes(html))
+                        episodes = self.__get_episodes(html)
+                        url = self.__get_best_page(episodes)
+                        if not url:
+                            return sources
+                        else:
+                            log_utils.log(url)
+                            url = urlparse.urljoin(self.base_url, url)
+                            html = self._http_get(url, cache_limit=.5)
             
             for match in re.finditer('<source[^>]+src=[\'"]([^\'"]+)([^>]+)', html):
                 stream_url, extra = match.groups()
@@ -89,6 +98,25 @@ class MoxieXK_Scraper(scraper.Scraper):
 
         return sources
 
+    def __get_best_page(self, episodes):
+        if 'EPTRAILER' in episodes: del episodes['EPTRAILER']
+        if 'EPCAM' in episodes: del episodes['EPCAM']
+        if len(episodes) == 1:
+            return episodes.items()[0][1]
+        else:
+            if 'EPHD' in episodes:
+                return episodes['EPHD']
+            elif 'EPFULL' in episodes:
+                return episodes['EPFULL']
+            else:
+                episodes.items()[0][1]
+        
+    def __get_episodes(self, html):
+        labels = dom_parser.parse_dom(html, 'a', {'data-type': 'watch'})
+        labels = [label.replace(' ', '').upper() for label in labels]
+        urls = dom_parser.parse_dom(html, 'a', {'data-type': 'watch'}, ret='href')
+        return dict(zip(labels, urls))
+        
     def get_url(self, video):
         return self._default_get_url(video)
 
