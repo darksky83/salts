@@ -115,8 +115,9 @@ class TVWTVS_Scraper(scraper.Scraper):
             if result['url'].startswith(show_url) and re.search('\s+Season\s+%s( |$)' % (video.season), result['title'], re.I):
                     url = urlparse.urljoin(self.base_url, result['url'])
                     html = self._http_get(url, cache_limit=2)
-                    for fragment in dom_parser.parse_dom(html, 'div', {'class': 'bp-head'}):
-                        match = re.search('href="([^"]+)[^>]+>(.*?)</a>', fragment)
+                    fragment = dom_parser.parse_dom(html, 'ul', {'class': '[^"]*listing-videos[^"]*'})
+                    if fragment:
+                        match = re.search('href="([^"]+)[^>]+>(.*?)</a>', fragment[0])
                         if match and re.search('\s+Episode\s+%s( |$)' % (video.episode), match.group(2)):
                             return scraper_utils.pathify_url(match.group(1))
 
