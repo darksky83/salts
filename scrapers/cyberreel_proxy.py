@@ -53,7 +53,10 @@ class CyberReel_Proxy(scraper.Scraper):
     @classmethod
     def get_settings(cls):
         name = cls.get_name()
-        settings = super(cls, cls).get_settings()
+        try:
+            settings = real_scraper.get_settings()
+        except:
+            settings = super(cls, cls).get_settings()
         offset = 4
         settings.append('         <setting id="%s-scraper_url" type="text" label="    %s" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_location'), offset))
         settings.append('         <setting id="%s-scraper_password" type="text" label="    %s" option="hidden" default="" visible="eq(-%d,true)"/>' % (name, i18n('scraper_key'), offset + 1))
