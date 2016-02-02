@@ -87,7 +87,13 @@ class MovieTV_Scraper(scraper.Scraper):
                     match = re.search(pattern, html)
                     if match:
                         stream_url = stream_url.replace(match.group(1), match.group(2))
+                    
                     sources[stream_url] = quality
+                    
+                if not sources:
+                    source_url = dom_parser.parse_dom(html, 'source', {'type': 'video[^"]*'}, ret='src')
+                    if source_url:
+                        sources[source_url[0]] = QUALITIES.HD720
             else:
                 js_data = scraper_utils.parse_json(html, url)
                 if 'url' in js_data:
