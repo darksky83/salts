@@ -49,6 +49,7 @@
         <setting id="show_premiere_cal" type="bool" label="30537" default="true"/>
         <setting id="show_friends" type="bool" label="30538" default="true"/>
         <setting id="show_search" type="bool" label="30539" default="true"/>
+        <setting id="show_settings" type="bool" label="30670" default="true"/>
         <setting label="30540" type="lsep"/>
         <setting id="movies_view" label="30541" type="number" default="0" visible="true"/>
         <setting id="tvshows_view" label="30542" type="number" default="0" visible="true"/>

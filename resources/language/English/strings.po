@@ -1717,3 +1717,7 @@ msgctxt "#30669"
 msgid "Select this item to Install the SALTS Themepak"
 msgstr ""
 
+msgctxt "#30670"
+msgid "Show Settings"
+msgstr ""
+
