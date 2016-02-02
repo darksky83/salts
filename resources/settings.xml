@@ -116,9 +116,12 @@
         <setting id="Movie_quality" type="enum" label="30583" lvalues="30660|30661|30662|30663|30664" default="0" visible="true"/>
         <setting id="airdate-fallback" type="bool" label="30584" default="true"/>
         <setting id="title-fallback" type="bool" label="30585" default="true"/>
-        <setting id="last_check" type="number" default="0" visible="false"/>
         <setting id="auto-disable" type="enum" label="30586" lvalues="30511|30638|30639" default="1"/>
         <setting id="disable-limit" type="slider" label="30657" default="150" range="100,25,250" option="int" enable="!eq(-1,0)"/>
+        <setting id="scraper_download" type="bool" visible="false" default="false"/>
+        <settind id="last_list_check" type="number" default="0" visible="false"/>
+        <setting id="scraper_url" type="text" label="30211" default="" visible="eq(-1,true)"/>
+        <setting id="scraper_password" type="text" label="30212" option="hidden" default="" visible="eq(-2,true)"/>
         <setting id='random_sso' type="bool" visible="false" default="true"/>
     </category>
     
@@ -201,8 +204,6 @@
          <setting id="CyberReel-base_url" type="text" label="    Base Url" default="http://cyberreel.com" visible="eq(-1,true)"/>
          <setting id="CyberReel-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="CyberReel_last_results" type="number" default="0" visible="false"/>
-         <setting id="CyberReel-scraper_url" type="text" label="    Scraper Download Url" default="" visible="eq(-4,true)"/>
-         <setting id="CyberReel-scraper_password" type="text" label="    Scraper Decryption Key" option="hidden" default="" visible="eq(-5,true)"/>
          <setting id="DayT.se-enable" type="bool" label="DayT.se Enabled" default="true" visible="true"/>
          <setting id="DayT.se-base_url" type="text" label="    Base Url" default="http://dayt.se" visible="eq(-1,true)"/>
          <setting id="DayT.se-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -295,8 +296,6 @@
          <setting id="IFlix-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="IFlix_last_results" type="number" default="0" visible="false"/>
          <setting id="IFlix-base_url2" type="text" label="    TV Shows Base Url" default="http://tvshows.cnfstudio.com" visible="eq(-4,true)"/>
-         <setting id="IFlix-scraper_url" type="text" label="    Scraper Download Url" default="" visible="eq(-5,true)"/>
-         <setting id="IFlix-scraper_password" type="text" label="    Scraper Decryption Key" option="hidden" default="" visible="eq(-6,true)"/>
          <setting id="iWatchOnline-enable" type="bool" label="iWatchOnline Enabled" default="true" visible="true"/>
          <setting id="iWatchOnline-base_url" type="text" label="    Base Url" default="https://www.iwatchonline.ag" visible="eq(-1,true)"/>
          <setting id="iWatchOnline-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -334,13 +333,13 @@
          <setting id="Movie4K-base_url" type="text" label="    Base Url" default="http://www.movie4k.to" visible="eq(-1,true)"/>
          <setting id="Movie4K-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Movie4K_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 3">
          <setting id="MovieHut-enable" type="bool" label="MovieHut Enabled" default="true" visible="true"/>
          <setting id="MovieHut-base_url" type="text" label="    Base Url" default="http://moviehut.co" visible="eq(-1,true)"/>
          <setting id="MovieHut-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovieHut_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 3">
          <setting id="MovieNight-enable" type="bool" label="MovieNight Enabled" default="true" visible="true"/>
          <setting id="MovieNight-base_url" type="text" label="    Base Url" default="http://movienight.ws" visible="eq(-1,true)"/>
          <setting id="MovieNight-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -404,8 +403,6 @@
          <setting id="OCW_last_results" type="number" default="0" visible="false"/>
          <setting id="OCW-filter" type="slider" range="0,180" option="int" label="     Filter results older than (0=No Filter) (days)" default="30" visible="eq(-4,true)"/>
          <setting id="OCW-select" type="enum" label="     Automatically Select" lvalues="30636|30637" default="0" visible="eq(-5,true)"/>
-         <setting id="OCW-scraper_url" type="text" label="    Scraper Download Url" default="" visible="eq(-6,true)"/>
-         <setting id="OCW-scraper_password" type="text" label="    Scraper Decryption Key" option="hidden" default="" visible="eq(-7,true)"/>
          <setting id="OneClickTVShows-enable" type="bool" label="OneClickTVShows Enabled" default="true" visible="true"/>
          <setting id="OneClickTVShows-base_url" type="text" label="    Base Url" default="http://oneclicktvshows.com" visible="eq(-1,true)"/>
          <setting id="OneClickTVShows-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -429,15 +426,15 @@
          <setting id="pftv-base_url" type="text" label="    Base Url" default="http://projectfreetv.so" visible="eq(-1,true)"/>
          <setting id="pftv-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="pftv_last_results" type="number" default="0" visible="false"/>
-    </category>
-    
-    <category label="Scrapers 4">
          <setting id="Premiumize.me-enable" type="bool" label="Premiumize.me Enabled" default="true" visible="true"/>
          <setting id="Premiumize.me-base_url" type="text" label="    Base Url" default="https://www.premiumize.me" visible="eq(-1,true)"/>
          <setting id="Premiumize.me-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="Premiumize.me_last_results" type="number" default="0" visible="false"/>
          <setting id="Premiumize.me-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
          <setting id="Premiumize.me-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
+    </category>
+    
+    <category label="Scrapers 4">
          <setting id="PrimeWire-enable" type="bool" label="PrimeWire Enabled" default="true" visible="true"/>
          <setting id="PrimeWire-base_url" type="text" label="    Base Url" default="http://www.primewire.ag" visible="eq(-1,true)"/>
          <setting id="PrimeWire-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -525,13 +522,13 @@
          <setting id="vidics.ch-base_url" type="text" label="    Base Url" default="http://www.vidics.ch" visible="eq(-1,true)"/>
          <setting id="vidics.ch-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="vidics.ch_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 5">
          <setting id="view47-enable" type="bool" label="view47 Enabled" default="true" visible="true"/>
          <setting id="view47-base_url" type="text" label="    Base Url" default="http://view47.com" visible="eq(-1,true)"/>
          <setting id="view47-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="view47_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 5">
          <setting id="ViewMovies-enable" type="bool" label="ViewMovies Enabled" default="true" visible="true"/>
          <setting id="ViewMovies-base_url" type="text" label="    Base Url" default="http://www.viewmovies.is" visible="eq(-1,true)"/>
          <setting id="ViewMovies-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
