@@ -1118,7 +1118,7 @@ def apply_urlresolver(hosters):
     
     import urlresolver.plugnplay
     resolvers = urlresolver.plugnplay.man.implementors(urlresolver.UrlResolver)
-    debrid_resolvers = [resolver for resolver in resolvers if resolver.isUniversal()]
+    debrid_resolvers = [resolver for resolver in resolvers if resolver.isUniversal() and resolver.get_setting('enabled') == 'true']
     filtered_hosters = []
     debrid_hosts = {}
     unk_hosts = {}
