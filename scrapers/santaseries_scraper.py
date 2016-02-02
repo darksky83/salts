@@ -32,7 +32,7 @@ import scraper
 
 BASE_URL = 'http://www.santaseries.com'
 
-class Dizibox_Scraper(scraper.Scraper):
+class SantaSeries_Scraper(scraper.Scraper):
     base_url = BASE_URL
 
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
@@ -88,7 +88,6 @@ class Dizibox_Scraper(scraper.Scraper):
         search_url += urllib.quote_plus(title)
         html = self._http_get(search_url, cache_limit=1)
         for item in dom_parser.parse_dom(html, 'div', {'class': 'item'}):
-            log_utils.log(item)
             match_url = dom_parser.parse_dom(item, 'a', ret='href')
             match_title = dom_parser.parse_dom(item, 'span', {'class': 'tt'})
             match_year = dom_parser.parse_dom(item, 'span', {'class': 'year'})
