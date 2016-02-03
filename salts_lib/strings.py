@@ -260,5 +260,6 @@ STRINGS = {
     'rec_reset_1': 30249,
     'rec_reset_2': 30250,
     'rec_reset_3': 30251,
-    'reset_failed': 30252
+    'reset_failed': 30252,
+    'no_stream_found': 30253
 }

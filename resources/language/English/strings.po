@@ -1026,6 +1026,10 @@ msgctxt "#30252"
 msgid "DB Reset Failed: %s"
 msgstr ""
 
+msgctxt "#30253"
+msgid "No Streamable Url Found"
+msgstr ""
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr ""
