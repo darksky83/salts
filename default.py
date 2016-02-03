@@ -1201,7 +1201,7 @@ def download_subtitles(language, title, year, season, episode):
         return srt_scraper.download_subtitle(subs[index]['url'])
 
 def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='', episode=''):
-    if hoster_url is None:
+    if direct is not None and hoster_url is None:
         kodi.notify(msg=i18n('resolve_failed') % (hoster_url), duration=7500)
         return False
 
