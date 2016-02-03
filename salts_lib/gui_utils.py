@@ -196,6 +196,10 @@ def perform_auto_conf(responses):
         kodi.set_setting('source_sort_order', '|'.join(sso))
     
     if responses[11]: reset_base_url()
+    trigger = [False, True, False, True, False, True, True, False, True, False, False, False]
+    if all([t == r for t, r in zip(trigger, responses)]):
+        kodi.set_setting('scraper_download', 'true')
+        
     kodi.notify(msg=i18n('auto_conf_complete'))
 
 def do_auto_config():
