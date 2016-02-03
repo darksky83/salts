@@ -46,7 +46,7 @@ class IFlix_Proxy(scraper.Scraper):
         try:
             return real_scraper.get_name()
         except:
-            return 'IFlix'
+            return ''
     
     @classmethod
     def get_settings(cls):

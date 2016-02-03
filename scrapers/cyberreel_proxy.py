@@ -46,7 +46,7 @@ class CyberReel_Proxy(scraper.Scraper):
         try:
             return real_scraper.get_name()
         except:
-            return 'CyberReel'
+            return ''
     
     @classmethod
     def get_settings(cls):

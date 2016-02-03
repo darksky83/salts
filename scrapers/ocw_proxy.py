@@ -46,7 +46,7 @@ class OCW_Proxy(scraper.Scraper):
         try:
             return real_scraper.get_name()
         except:
-            return 'OCW'
+            return ''
     
     @classmethod
     def get_settings(cls):
