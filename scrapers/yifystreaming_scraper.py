@@ -69,7 +69,6 @@ class YifyStreaming_Scraper(scraper.Scraper):
                 headers['User-Agent'] = LOCAL_USER_AGENT
                 gk_url = urlparse.urljoin(self.base_url, GK_URL)
                 html = self._http_get(gk_url, data=data, headers=headers, cache_limit=.5)
-                log_utils.log(html)
                 js_data = scraper_utils.parse_json(html, gk_url)
                 if 'link' in js_data:
                     if isinstance(js_data['link'], list):
@@ -79,7 +78,6 @@ class YifyStreaming_Scraper(scraper.Scraper):
                         sources = {js_data['link']: QUALITIES.HIGH}
                         direct = False
                     
-                    log_utils.log(sources)
                     for source in sources:
                         source = source.replace('\\/', '/')
                         if direct:
