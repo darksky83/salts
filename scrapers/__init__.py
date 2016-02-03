@@ -74,7 +74,8 @@ def update_settings():
         new_settings = []
         cat_count = 1
         old_xml = xml
-        classes = scraper.Scraper.__class__.__subclasses__(scraper.Scraper) + proxy.Proxy.__class__.__subclasses__(proxy.Proxy)  # @UndefinedVariable
+        classes = scraper.Scraper.__class__.__subclasses__(scraper.Scraper)  # @UndefinedVariable
+        classes += proxy.Proxy.__class__.__subclasses__(proxy.Proxy)  # @UndefinedVariable
         for cls in sorted(classes, key=lambda x: x.get_name().upper()):
             if not cls.get_name() or cls.has_proxy(): continue
             new_settings += cls.get_settings()
