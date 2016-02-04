@@ -122,21 +122,23 @@ class SezonLukDizi_Scraper(scraper.Scraper):
         search_url = urlparse.urljoin(self.base_url, SEARCH_URL)
         search_url += urllib.quote_plus(title)
         html = self._http_get(search_url, cache_limit=8)
-        for item in dom_parser.parse_dom(html, 'div', {'class': 'item'}):
-            match_url = dom_parser.parse_dom(item, 'a', {'class': 'header'}, ret='href')
-            match_title_year = dom_parser.parse_dom(item, 'a', {'class': 'header'})
-            if match_url and match_title_year:
-                match_url = match_url[0]
-                match_title_year = match_title_year[0]
-                r = re.search('(.*?)\s+\((\d{4})\)', match_title_year)
-                if r:
-                    match_title, match_year = r.groups()
-                else:
-                    match_title = match_title_year
-                    match_year = ''
-                
-                if not year or not match_year or year == match_year:
-                    result = {'url': scraper_utils.pathify_url(match_url), 'title': match_title, 'year': match_year}
-                    results.append(result)
+        fragment = dom_parser.parse_dom(html, 'div', {'class': '[^"]*items[^"]*'})
+        if fragment:
+            for item in dom_parser.parse_dom(fragment[0], 'div', {'class': 'item'}):
+                match_url = dom_parser.parse_dom(item, 'a', {'class': 'header'}, ret='href')
+                match_title_year = dom_parser.parse_dom(item, 'a', {'class': 'header'})
+                if match_url and match_title_year:
+                    match_url = match_url[0]
+                    match_title_year = match_title_year[0]
+                    r = re.search('(.*?)\s+\((\d{4})\)', match_title_year)
+                    if r:
+                        match_title, match_year = r.groups()
+                    else:
+                        match_title = match_title_year
+                        match_year = ''
+                    
+                    if not year or not match_year or year == match_year:
+                        result = {'url': scraper_utils.pathify_url(match_url), 'title': match_title, 'year': match_year}
+                        results.append(result)
 
         return results
