@@ -114,7 +114,7 @@ class SezonLukDizi_Scraper(scraper.Scraper):
             title_pattern = '''href=['"](?P<url>[^'"]+)[^>]*>(?P<title>[^<]+)'''
             airdate_pattern = '''href=['"]([^"']+)[^>]*>[^<]*</a>\s*</td>\s*<td class="right aligned">{p_day}\.{p_month}\.{year}'''
             result = self._default_get_episode_url(season_url, video, episode_pattern, title_pattern, airdate_pattern)
-            if 'javascript:;' not in result:
+            if result and 'javascript:;' not in result:
                 return result
 
     def search(self, video_type, title, year):
