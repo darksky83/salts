@@ -100,16 +100,24 @@ def update_all_scrapers():
         now = time.time()
         list_url = kodi.get_setting('scraper_url')
         scraper_password = kodi.get_setting('scraper_password')
-        if list_url and scraper_password and last_check < (now - (24 * 60 * 60)):
+        list_path = os.path.join(kodi.translate_path(kodi.get_profile()), 'scraper_list.txt')
+        exists = os.path.exists(list_path)
+        if list_url and scraper_password and (not exists or last_check < (now - (24 * 60 * 60))):
             scraper_list = utils2.get_and_decrypt(list_url, scraper_password)
             if scraper_list:
-                kodi.set_setting('last_list_check', str(int(now)))
-                for line in scraper_list.split('\n'):
-                    line = line.replace(' ', '')
-                    if line:
-                        scraper_url, filename = line.split(',')
-                        if scraper_url.startswith('http'):
-                            update_scraper(filename, scraper_url)
+                try:
+                    with open(list_path, 'w') as f:
+                        f.write(scraper_list)
+    
+                    kodi.set_setting('last_list_check', str(int(now)))
+                    for line in scraper_list.split('\n'):
+                        line = line.replace(' ', '')
+                        if line:
+                            scraper_url, filename = line.split(',')
+                            if scraper_url.startswith('http'):
+                                update_scraper(filename, scraper_url)
+                except Exception as e:
+                    log_utils.log('Exception during scraper update: %s' % (e), log_utils.LOGWARNING)
     
 def update_scraper(filename, scraper_url):
     try:
