@@ -66,7 +66,10 @@ class SezonLukDizi_Scraper(scraper.Scraper):
             return link
             
     def format_source_label(self, item):
-        return '[%s] %s' % (item['quality'], item['host'])
+        label = '[%s] %s' % (item['quality'], item['host'])
+        if 'subs' in item and item['subs']:
+            label += ' (Turkish subtitles)'
+        return label
 
     def get_sources(self, video):
         source_url = self.get_url(video)
@@ -80,6 +83,12 @@ class SezonLukDizi_Scraper(scraper.Scraper):
                     if iframe_url:
                         html = self._http_get(iframe_url[0], cache_limit=.25)
                         seen_urls = {}
+                        # if captions exist, then they aren't hardcoded
+                        if re.search('kind\s*:\s*"captions"', html):
+                            subs = False
+                        else:
+                            subs = True
+                            
                         for match in re.finditer('"?file"?\s*:\s*"([^"]+)"\s*,\s*"?label"?\s*:\s*"(\d+)p?[^"]*"', html):
                             stream_url, height = match.groups()
                             if stream_url not in seen_urls:
@@ -95,7 +104,8 @@ class SezonLukDizi_Scraper(scraper.Scraper):
                                     quality = scraper_utils.gv_get_quality(stream_url)
                                 else:
                                     quality = scraper_utils.height_get_quality(height)
-                                hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True}
+                                hoster = {'multi-part': False, 'host': self._get_direct_hostname(stream_url), 'class': self, 'quality': quality, 'views': None, 'rating': None, 'url': stream_url, 'direct': True, 'subs': subs}
+                                
                                 hosters.append(hoster)
         return hosters
     
