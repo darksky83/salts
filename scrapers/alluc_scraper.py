@@ -63,7 +63,10 @@ class Alluc_Scraper(scraper.Scraper):
         return link
 
     def format_source_label(self, item):
-        return '[%s] %s' % (item['quality'], item['host'])
+        label = '[%s] %s' % (item['quality'], item['host'])
+        if 'extra' in item:
+            label += ' [%s]' % (item['extra'])
+        return label
 
     def get_sources(self, video):
         source_url = self.get_url(video)
@@ -91,6 +94,7 @@ class Alluc_Scraper(scraper.Scraper):
             js_result = scraper_utils.parse_json(html, search_url)
             if js_result['status'] == 'success':
                 for result in js_result['result']:
+                    log_utils.log(result)
                     if len(result['hosterurls']) > 1: continue
                     if result['extension'] == 'rar': continue
                     
@@ -100,6 +104,7 @@ class Alluc_Scraper(scraper.Scraper):
                             host = urlparse.urlsplit(stream_url).hostname
                             quality = scraper_utils.get_quality(video, host, self._get_title_quality(result['title']))
                             hoster = {'multi-part': False, 'class': self, 'views': None, 'url': stream_url, 'rating': None, 'host': host, 'quality': quality, 'direct': False}
+                            hoster['extra'] = result['title']
                             hosters.append(hoster)
                             seen_urls.add(stream_url)
             else:
