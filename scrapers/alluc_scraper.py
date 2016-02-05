@@ -94,7 +94,6 @@ class Alluc_Scraper(scraper.Scraper):
             js_result = scraper_utils.parse_json(html, search_url)
             if js_result['status'] == 'success':
                 for result in js_result['result']:
-                    log_utils.log(result)
                     if len(result['hosterurls']) > 1: continue
                     if result['extension'] == 'rar': continue
                     
