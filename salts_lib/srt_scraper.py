@@ -148,6 +148,9 @@ class SRT_Scraper():
                 log_utils.log('Failed to create directory %s' % os.path.dirname(final_path), log_utils.LOGERROR)
                 raise
 
+        if isinstance(final_path, str):
+            final_path.decode('utf-8', 'ignore')
+            
         with open(final_path, 'w') as f:
             f.write(srt)
         return final_path
