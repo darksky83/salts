@@ -137,6 +137,7 @@ class SRT_Scraper():
             filename = r.group(1)
         else:
             filename = 'addic7ed_subtitle.srt'
+        filename = re.sub('[^\x00-\x7F]', '', filename)
 
         final_path = os.path.join(kodi.get_setting('subtitle-folder'), filename)
         final_path = kodi.translate_path(final_path)
@@ -148,9 +149,6 @@ class SRT_Scraper():
                 log_utils.log('Failed to create directory %s' % os.path.dirname(final_path), log_utils.LOGERROR)
                 raise
 
-        if isinstance(final_path, str):
-            final_path.decode('utf-8', 'ignore')
-            
         with open(final_path, 'w') as f:
             f.write(srt)
         return final_path
