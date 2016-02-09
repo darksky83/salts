@@ -120,10 +120,17 @@ def get_pin():
     del dialog
 
 class ProgressDialog(object):
-    def __init__(self, heading, line1='', line2='', line3='', active=True):
+    def __init__(self, heading, line1='', line2='', line3='', background=False, active=True):
         if active:
-            self.pd = xbmcgui.DialogProgress()
-            self.pd.create(heading, line1, line2, line3)
+            if background:
+                self.pd = xbmcgui.DialogProgressBG()
+                msg = line1 + line2 + line3
+                self.pd.create(heading, msg)
+            else:
+                self.pd = xbmcgui.DialogProgress()
+                self.pd.create(heading, line1, line2, line3)
+            self.background = background
+            self.heading = heading
             self.pd.update(0)
         else:
             self.pd = None
@@ -137,14 +144,18 @@ class ProgressDialog(object):
             del self.pd
     
     def is_canceled(self):
-        if self.pd is not None:
+        if self.pd is not None and not self.background:
             return self.pd.iscanceled()
         else:
             return False
         
     def update(self, percent, line1='', line2='', line3=''):
         if self.pd is not None:
-            self.pd.update(percent, line1, line2, line3)
+            if self.background:
+                msg = line1 + line2 + line3
+                self.pd.update(percent, self.heading, msg)
+            else:
+                self.pd.update(percent, line1, line2, line3)
 
 def perform_auto_conf(responses):
     length = len(responses)

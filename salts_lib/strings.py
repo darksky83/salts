@@ -261,5 +261,11 @@ STRINGS = {
     'rec_reset_2': 30250,
     'rec_reset_3': 30251,
     'reset_failed': 30252,
-    'no_stream_found': 30253
+    'no_stream_found': 30253,
+    'discover_mne': 30254,
+    'retr_history': 30255,
+    'retr_watchlist': 30256,
+    'retr_hidden': 30257,
+    'req_progress': 30258,
+    'rec_progress': 30259
 }

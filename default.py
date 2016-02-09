@@ -708,78 +708,86 @@ def get_progress(cached=True):
         if in_cache:
             return [], utils2.sort_progress(result, sort_order=SORT_MAP[int(kodi.get_setting('sort_progress'))])
         
-    timeout = max_timeout = int(kodi.get_setting('trakt_timeout'))
-    progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, cached=cached)
-    if kodi.get_setting('include_watchlist_next') == 'true':
-        watchlist = trakt_api.show_watchlist(SECTIONS.TV)
-        watchlist = [{'show': item, 'last_watched_at': None} for item in watchlist]
-        progress_list += watchlist
-
-    hidden = dict.fromkeys([item['show']['ids']['trakt'] for item in trakt_api.get_hidden_progress(cached=cached)])
-    filter_list = dict.fromkeys(utils2.get_progress_skip_list())
-    force_list = dict.fromkeys(utils2.get_force_progress_list())
-    use_exclusion = kodi.get_setting('use_cached_exclusion') == 'true'
-    worker_count = 0
-    workers = []
-    shows = {}
-    q = Queue()
-    begin = time.time()
-    for show in progress_list:
-        trakt_id = str(show['show']['ids']['trakt'])
-        # skip hidden shows
-        if int(trakt_id) in hidden:
-            continue
-        
-        # skip cached ended 100% shows
-        if use_exclusion and trakt_id in filter_list and trakt_id not in force_list:
-            log_utils.log('Skipping %s (%s) as cached MNE ended exclusion' % (trakt_id, show['show']['title']), log_utils.LOGDEBUG)
-            continue
-        
-        worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, cached, .08])
-        worker_count += 1
-        workers.append(worker)
-        # create a shows dictionary to be used during progress building
-        shows[trakt_id] = show['show']
-        shows[trakt_id]['last_watched_at'] = show['last_watched_at']
-
-    episodes = []
-    while worker_count > 0:
-        try:
-            log_utils.log('Calling get with timeout: %s' % (timeout), xbmc.LOGDEBUG)
-            progress = q.get(True, timeout)
-            # log_utils.log('Got Progress: %s' % (progress), xbmc.LOGDEBUG)
-            worker_count -= 1
-
-            if 'next_episode' in progress and progress['next_episode']:
-                episode = {'show': shows[progress['trakt']], 'episode': progress['next_episode']}
-                episode['last_watched_at'] = shows[progress['trakt']]['last_watched_at']
-                episode['percent_completed'] = (progress['completed'] * 100) / progress['aired'] if progress['aired'] > 0 else 0
-                episode['completed'] = progress['completed']
-                episodes.append(episode)
-            else:
-                trakt_id = str(progress['trakt'])
-                show = shows[trakt_id]
-                if show['status'] and show['status'].upper() == 'ENDED' and progress['completed'] == progress['aired'] and trakt_id not in filter_list and trakt_id not in force_list:
-                    log_utils.log('Adding %s (%s) (%s - %s) to MNE exclusion list' % (trakt_id, show['title'], progress['completed'], progress['aired']), log_utils.LOGDEBUG)
-                    manage_progress_cache(ACTIONS.ADD, progress['trakt'])
-
-            if max_timeout > 0:
-                timeout = max_timeout - (time.time() - begin)
-                if timeout < 0: timeout = 0
-        except Empty:
-            log_utils.log('Get Progress Process Timeout', xbmc.LOGWARNING)
-            break
-    else:
-        log_utils.log('All progress results received')
-        
-    total = len(workers)
-    if worker_count > 0:
-        timeout_msg = i18n('progress_timeouts') % (worker_count, total)
-        kodi.notify(msg=timeout_msg, duration=5000)
-        log_utils.log(timeout_msg, xbmc.LOGWARNING)
-    else:
-        # only cache the results if all results were successful
-        db_connection.cache_function(get_progress.__name__, result=episodes)
+    with gui_utils.ProgressDialog(i18n('discover_mne'), background=True) as pd:
+        timeout = max_timeout = int(kodi.get_setting('trakt_timeout'))
+        pd.update(0, line1=i18n('retr_history'))
+        progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, cached=cached)
+        if kodi.get_setting('include_watchlist_next') == 'true':
+            pd.update(5, line1=i18n('retr_watchlist'))
+            watchlist = trakt_api.show_watchlist(SECTIONS.TV)
+            watchlist = [{'show': item, 'last_watched_at': None} for item in watchlist]
+            progress_list += watchlist
+    
+        pd.update(10, line1=i18n('retr_hidden'))
+        hidden = dict.fromkeys([item['show']['ids']['trakt'] for item in trakt_api.get_hidden_progress(cached=cached)])
+        filter_list = dict.fromkeys(utils2.get_progress_skip_list())
+        force_list = dict.fromkeys(utils2.get_force_progress_list())
+        use_exclusion = kodi.get_setting('use_cached_exclusion') == 'true'
+        worker_count = 0
+        workers = []
+        shows = {}
+        q = Queue()
+        begin = time.time()
+        total = len(progress_list)
+        for i, show in enumerate(progress_list):
+            trakt_id = str(show['show']['ids']['trakt'])
+            # skip hidden shows
+            if int(trakt_id) in hidden:
+                continue
+            
+            # skip cached ended 100% shows
+            if use_exclusion and trakt_id in filter_list and trakt_id not in force_list:
+                log_utils.log('Skipping %s (%s) as cached MNE ended exclusion' % (trakt_id, show['show']['title']), log_utils.LOGDEBUG)
+                continue
+            
+            worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, cached, .08])
+            percent = i * 25 / total + 10
+            pd.update(percent, line1=i18n('req_progress') % (show['show']['title']))
+            worker_count += 1
+            workers.append(worker)
+            # create a shows dictionary to be used during progress building
+            shows[trakt_id] = show['show']
+            shows[trakt_id]['last_watched_at'] = show['last_watched_at']
+    
+        episodes = []
+        while worker_count > 0:
+            try:
+                log_utils.log('Calling get with timeout: %s' % (timeout), xbmc.LOGDEBUG)
+                progress = q.get(True, timeout)
+                # log_utils.log('Got Progress: %s' % (progress), xbmc.LOGDEBUG)
+                worker_count -= 1
+    
+                show = shows[str(progress['trakt'])]
+                percent = ((total - worker_count) * 65 / total) + 35
+                pd.update(percent, line1=i18n('rec_progress') % (show['title']))
+                if 'next_episode' in progress and progress['next_episode']:
+                    episode = {'show': show, 'episode': progress['next_episode']}
+                    episode['last_watched_at'] = show['last_watched_at']
+                    episode['percent_completed'] = (progress['completed'] * 100) / progress['aired'] if progress['aired'] > 0 else 0
+                    episode['completed'] = progress['completed']
+                    episodes.append(episode)
+                else:
+                    if show['status'] and show['status'].upper() == 'ENDED' and progress['completed'] == progress['aired'] and trakt_id not in filter_list and trakt_id not in force_list:
+                        log_utils.log('Adding %s (%s) (%s - %s) to MNE exclusion list' % (trakt_id, show['title'], progress['completed'], progress['aired']), log_utils.LOGDEBUG)
+                        manage_progress_cache(ACTIONS.ADD, progress['trakt'])
+    
+                if max_timeout > 0:
+                    timeout = max_timeout - (time.time() - begin)
+                    if timeout < 0: timeout = 0
+            except Empty:
+                log_utils.log('Get Progress Process Timeout', xbmc.LOGWARNING)
+                break
+        else:
+            log_utils.log('All progress results received')
+            
+        total = len(workers)
+        if worker_count > 0:
+            timeout_msg = i18n('progress_timeouts') % (worker_count, total)
+            kodi.notify(msg=timeout_msg, duration=5000)
+            log_utils.log(timeout_msg, xbmc.LOGWARNING)
+        else:
+            # only cache the results if all results were successful
+            db_connection.cache_function(get_progress.__name__, result=episodes)
         
     workers = utils2.reap_workers(workers)
     return workers, utils2.sort_progress(episodes, sort_order=SORT_MAP[int(kodi.get_setting('sort_progress'))])
