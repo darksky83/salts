@@ -128,3 +128,13 @@ def get_current_view():
         views = match.group(1)
         for view in views.split(','):
             if xbmc.getInfoLabel('Control.GetLabel(%s)' % (view)): return view
+
+class WorkingDialog(object):
+    def __init__(self):
+        xbmc.executebuiltin('ActivateWindow(busydialog)')
+    
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, type, value, traceback):
+        xbmc.executebuiltin('Dialog.Close(busydialog)')

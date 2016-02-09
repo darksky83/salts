@@ -1217,95 +1217,97 @@ def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='
             kodi.notify(msg=i18n('resolve_failed') % (i18n('no_stream_found')), duration=7500)
         return False
 
-    if direct:
-        log_utils.log('Treating hoster_url as direct: %s' % (hoster_url))
-        stream_url = hoster_url
-    else:
-        import urlresolver
-        hmf = urlresolver.HostedMediaFile(url=hoster_url)
-        if not hmf:
-            log_utils.log('Indirect hoster_url not supported by urlresolver: %s' % (hoster_url))
+    with kodi.WorkingDialog():
+        if direct:
+            log_utils.log('Treating hoster_url as direct: %s' % (hoster_url))
             stream_url = hoster_url
         else:
-            stream_url = hmf.resolve()
-            if not stream_url or not isinstance(stream_url, basestring):
-                try: msg = stream_url.msg
-                except: msg = hoster_url
-                kodi.notify(msg=i18n('resolve_failed') % (msg), duration=7500)
-                return False
-
-    resume_point = 0
-    pseudo_tv = xbmcgui.Window(10000).getProperty('PseudoTVRunning').lower()
-    if pseudo_tv != 'true' and mode not in [MODES.DOWNLOAD_SOURCE, MODES.DIRECT_DOWNLOAD]:
-        if utils.bookmark_exists(trakt_id, season, episode):
-            if utils.get_resume_choice(trakt_id, season, episode):
-                resume_point = utils.get_bookmark(trakt_id, season, episode)
-                log_utils.log('Resume Point: %s' % (resume_point), xbmc.LOGDEBUG)
-
-    try:
-        win = xbmcgui.Window(10000)
-        win.setProperty('salts.playing', 'True')
-        win.setProperty('salts.playing.trakt_id', str(trakt_id))
-        win.setProperty('salts.playing.season', str(season))
-        win.setProperty('salts.playing.episode', str(episode))
-        if resume_point > 0:
-            if kodi.get_setting('trakt_bookmark') == 'true':
-                win.setProperty('salts.playing.trakt_resume', str(resume_point))
+            import urlresolver
+            hmf = urlresolver.HostedMediaFile(url=hoster_url)
+            if not hmf:
+                log_utils.log('Indirect hoster_url not supported by urlresolver: %s' % (hoster_url))
+                stream_url = hoster_url
             else:
-                win.setProperty('salts.playing.salts_resume', str(resume_point))
+                stream_url = hmf.resolve()
+                if not stream_url or not isinstance(stream_url, basestring):
+                    try: msg = stream_url.msg
+                    except: msg = hoster_url
+                    kodi.notify(msg=i18n('resolve_failed') % (msg), duration=7500)
+                    return False
+    
+        resume_point = 0
+        pseudo_tv = xbmcgui.Window(10000).getProperty('PseudoTVRunning').lower()
+        if pseudo_tv != 'true' and mode not in [MODES.DOWNLOAD_SOURCE, MODES.DIRECT_DOWNLOAD]:
+            if utils.bookmark_exists(trakt_id, season, episode):
+                if utils.get_resume_choice(trakt_id, season, episode):
+                    resume_point = utils.get_bookmark(trakt_id, season, episode)
+                    log_utils.log('Resume Point: %s' % (resume_point), xbmc.LOGDEBUG)
+    
+        try:
+            win = xbmcgui.Window(10000)
+            win.setProperty('salts.playing', 'True')
+            win.setProperty('salts.playing.trakt_id', str(trakt_id))
+            win.setProperty('salts.playing.season', str(season))
+            win.setProperty('salts.playing.episode', str(episode))
+            if resume_point > 0:
+                if kodi.get_setting('trakt_bookmark') == 'true':
+                    win.setProperty('salts.playing.trakt_resume', str(resume_point))
+                else:
+                    win.setProperty('salts.playing.salts_resume', str(resume_point))
+    
+            art = {'thumb': '', 'fanart': ''}
+            info = {}
+            show_meta = {}
+            if video_type == VIDEO_TYPES.EPISODE:
+                path = kodi.get_setting('tv-download-folder')
+                file_name = utils2.filename_from_title(trakt_id, VIDEO_TYPES.TVSHOW)
+                file_name = file_name % ('%02d' % int(season), '%02d' % int(episode))
+    
+                ep_meta = trakt_api.get_episode_details(trakt_id, season, episode)
+                show_meta = trakt_api.get_show_details(trakt_id)
+                win.setProperty('script.trakt.ids', json.dumps(show_meta['ids']))
+                people = trakt_api.get_people(SECTIONS.TV, trakt_id) if kodi.get_setting('include_people') == 'true' else None
+                info = utils.make_info(ep_meta, show_meta, people)
+                images = {}
+                images['images'] = show_meta['images']
+                images['images'].update(ep_meta['images'])
+                art = utils2.make_art(images)
+    
+                path = make_path(path, VIDEO_TYPES.TVSHOW, show_meta['title'], season=season)
+                file_name = utils2.filename_from_title(show_meta['title'], VIDEO_TYPES.TVSHOW)
+                file_name = file_name % ('%02d' % int(season), '%02d' % int(episode))
+            else:
+                path = kodi.get_setting('movie-download-folder')
+                file_name = utils2.filename_from_title(trakt_id, video_type)
+    
+                movie_meta = trakt_api.get_movie_details(trakt_id)
+                win.setProperty('script.trakt.ids', json.dumps(movie_meta['ids']))
+                people = trakt_api.get_people(SECTIONS.MOVIES, trakt_id) if kodi.get_setting('include_people') == 'true' else None
+                info = utils.make_info(movie_meta, people=people)
+                art = utils2.make_art(movie_meta)
+    
+                path = make_path(path, video_type, movie_meta['title'], movie_meta['year'])
+                file_name = utils2.filename_from_title(movie_meta['title'], video_type, movie_meta['year'])
+        except TransientTraktError as e:
+            log_utils.log('During Playback: %s' % (str(e)), xbmc.LOGWARNING)  # just log warning if trakt calls fail and leave meta and art blank
+    
+        if mode in [MODES.DOWNLOAD_SOURCE, MODES.DIRECT_DOWNLOAD]:
+            utils2.download_media(stream_url, path, file_name)
+            return True
+    
+        if video_type == VIDEO_TYPES.EPISODE and utils2.srt_download_enabled() and show_meta:
+            srt_path = download_subtitles(kodi.get_setting('subtitle-lang'), show_meta['title'], show_meta['year'], season, episode)
+            if utils2.srt_show_enabled() and srt_path:
+                log_utils.log('Setting srt path: %s' % (srt_path), xbmc.LOGDEBUG)
+                win.setProperty('salts.playing.srt', srt_path)
+    
+        listitem = xbmcgui.ListItem(path=stream_url, iconImage=art['thumb'], thumbnailImage=art['thumb'])
+        listitem.setProperty('fanart_image', art['fanart'])
+        try: listitem.setArt(art)
+        except: pass
+        listitem.setPath(stream_url)
+        listitem.setInfo('video', info)
 
-        art = {'thumb': '', 'fanart': ''}
-        info = {}
-        show_meta = {}
-        if video_type == VIDEO_TYPES.EPISODE:
-            path = kodi.get_setting('tv-download-folder')
-            file_name = utils2.filename_from_title(trakt_id, VIDEO_TYPES.TVSHOW)
-            file_name = file_name % ('%02d' % int(season), '%02d' % int(episode))
-
-            ep_meta = trakt_api.get_episode_details(trakt_id, season, episode)
-            show_meta = trakt_api.get_show_details(trakt_id)
-            win.setProperty('script.trakt.ids', json.dumps(show_meta['ids']))
-            people = trakt_api.get_people(SECTIONS.TV, trakt_id) if kodi.get_setting('include_people') == 'true' else None
-            info = utils.make_info(ep_meta, show_meta, people)
-            images = {}
-            images['images'] = show_meta['images']
-            images['images'].update(ep_meta['images'])
-            art = utils2.make_art(images)
-
-            path = make_path(path, VIDEO_TYPES.TVSHOW, show_meta['title'], season=season)
-            file_name = utils2.filename_from_title(show_meta['title'], VIDEO_TYPES.TVSHOW)
-            file_name = file_name % ('%02d' % int(season), '%02d' % int(episode))
-        else:
-            path = kodi.get_setting('movie-download-folder')
-            file_name = utils2.filename_from_title(trakt_id, video_type)
-
-            movie_meta = trakt_api.get_movie_details(trakt_id)
-            win.setProperty('script.trakt.ids', json.dumps(movie_meta['ids']))
-            people = trakt_api.get_people(SECTIONS.MOVIES, trakt_id) if kodi.get_setting('include_people') == 'true' else None
-            info = utils.make_info(movie_meta, people=people)
-            art = utils2.make_art(movie_meta)
-
-            path = make_path(path, video_type, movie_meta['title'], movie_meta['year'])
-            file_name = utils2.filename_from_title(movie_meta['title'], video_type, movie_meta['year'])
-    except TransientTraktError as e:
-        log_utils.log('During Playback: %s' % (str(e)), xbmc.LOGWARNING)  # just log warning if trakt calls fail and leave meta and art blank
-
-    if mode in [MODES.DOWNLOAD_SOURCE, MODES.DIRECT_DOWNLOAD]:
-        utils2.download_media(stream_url, path, file_name)
-        return True
-
-    if video_type == VIDEO_TYPES.EPISODE and utils2.srt_download_enabled() and show_meta:
-        srt_path = download_subtitles(kodi.get_setting('subtitle-lang'), show_meta['title'], show_meta['year'], season, episode)
-        if utils2.srt_show_enabled() and srt_path:
-            log_utils.log('Setting srt path: %s' % (srt_path), xbmc.LOGDEBUG)
-            win.setProperty('salts.playing.srt', srt_path)
-
-    listitem = xbmcgui.ListItem(path=stream_url, iconImage=art['thumb'], thumbnailImage=art['thumb'])
-    listitem.setProperty('fanart_image', art['fanart'])
-    try: listitem.setArt(art)
-    except: pass
-    listitem.setPath(stream_url)
-    listitem.setInfo('video', info)
     if dialog or utils2.from_playlist():
         xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, listitem)
     else:
