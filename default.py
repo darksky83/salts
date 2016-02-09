@@ -342,14 +342,21 @@ def scraper_settings():
         menu_items.append([i18n('move_to'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
         queries = {'mode': MODES.RESET_FAILS, 'name': name}
         menu_items.append([i18n('reset_fails'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
+        queries = {'mode': MODES.RESET_REL_URLS, 'name': name}
+        menu_items.append([i18n('reset_rel_urls'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
         queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': name}
         menu_items.append([toggle_label, 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))])
-        queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': name}
         
+        queries = {'mode': MODES.TOGGLE_SCRAPER, 'name': name}
         kodi.create_item(queries, label, thumb=utils2.art('scraper.png'), fanart=utils2.art('fanart.jpg'), is_folder=False,
                          is_playable=False, menu_items=menu_items, replace_menu=True)
     kodi.end_of_directory()
 
+@url_dispatcher.register(MODES.RESET_REL_URLS, ['name'])
+def reset_rel_urls(name):
+    db_connection.clear_scraper_related_urls(name)
+    kodi.notify(msg=i18n('scraper_url_reset') % (name))
+    
 @url_dispatcher.register(MODES.RESET_FAILS, ['name'])
 def reset_fails(name):
     kodi.set_setting('%s_last_results' % (name), '0')

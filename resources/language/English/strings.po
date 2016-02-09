@@ -1054,6 +1054,14 @@ msgctxt "#30259"
 msgid "Received Progress for: %s"
 msgstr ""
 
+msgctxt "#30260"
+msgid "Reset Related Urls"
+msgstr ""
+
+msgctxt "#30261"
+msgid "Related Urls Cleared: %s"
+msgstr ""
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr ""
