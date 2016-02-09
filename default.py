@@ -695,7 +695,7 @@ def show_collection(section):
     # hack aired_episodes to override w/ collected_episodes to workaround trakt.tv cache issue
     if section == SECTIONS.TV:
         for item in items:
-            collected_episodes = len([e for s in item['seasons'] for e in s['episodes']])
+            collected_episodes = len([e for s in item['seasons'] if s['number'] != 0 for e in s['episodes']])
             log_utils.log('%s/%s: Collected: %s - Aired: %s' % (item['ids']['trakt'], item['ids']['slug'], collected_episodes, item['aired_episodes']), xbmc.LOGDEBUG)
             if collected_episodes > item['aired_episodes']:
                 item['aired_episodes'] = collected_episodes
