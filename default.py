@@ -92,6 +92,7 @@ def browse_menu(section):
     section_label2 = section_params['label_single']
     if utils2.menu_on('trending'): kodi.create_item({'mode': MODES.TRENDING, 'section': section}, i18n('trending') % (section_label), thumb=utils2.art('trending.png'), fanart=utils2.art('fanart.jpg'))
     if utils2.menu_on('popular'): kodi.create_item({'mode': MODES.POPULAR, 'section': section}, i18n('popular') % (section_label), thumb=utils2.art('popular.png'), fanart=utils2.art('fanart.jpg'))
+    if utils2.menu_on('anticipated'): kodi.create_item({'mode': MODES.ANTICIPATED, 'section': section}, i18n('anticipated') % (section_label), thumb=utils2.art('anticipated.png'), fanart=utils2.art('fanart.jpg'))
     if utils2.menu_on('recent'): kodi.create_item({'mode': MODES.RECENT, 'section': section}, i18n('recently_updated') % (section_label), thumb=utils2.art('recent.png'), fanart=utils2.art('fanart.jpg'))
     if utils2.menu_on('mosts'): kodi.create_item({'mode': MODES.MOSTS, 'section': section}, i18n('mosts') % (section_label2), thumb=utils2.art('mosts.png'), fanart=utils2.art('fanart.jpg'))
     add_section_lists(section)
@@ -432,6 +433,11 @@ def browse_trending(section, page=1):
 def browse_popular(section, page=1):
     list_data = trakt_api.get_popular(section, page)
     make_dir_from_list(section, list_data, query={'mode': MODES.POPULAR, 'section': section}, page=page)
+
+@url_dispatcher.register(MODES.ANTICIPATED, ['section'], ['page'])
+def browse_anticipated(section, page=1):
+    list_data = trakt_api.get_anticipated(section, page)
+    make_dir_from_list(section, list_data, query={'mode': MODES.ANTICIPATED, 'section': section}, page=page)
 
 @url_dispatcher.register(MODES.RECENT, ['section'], ['page'])
 def browse_recent(section, page=1):

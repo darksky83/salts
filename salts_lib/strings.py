@@ -269,5 +269,6 @@ STRINGS = {
     'req_progress': 30258,
     'rec_progress': 30259,
     'reset_rel_urls': 30260,
-    'scraper_url_reset': 30261
+    'scraper_url_reset': 30261,
+    'anticipated': 30262
 }
