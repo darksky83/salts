@@ -31,9 +31,9 @@
     <category label="30546">
         <setting id="show_trending" type="bool" label="30524" default="true"/>
         <setting id="show_popular" type="bool" label="30525" default="true"/>
+        <setting id="show_anticipated" type="bool" label="30671" default="true"/>
         <setting id="show_recent" type="bool" label="30526" default="true"/>
         <setting id="show_mosts" type="bool" label="30641" default="true"/>
-        <setting id="show_anticipated" type="bool" label="30671" default="true"/>
         <setting id="show_on_deck" type="bool" label="30647" default="true"/>
         <setting id="show_recommended" type="bool" label="30527" default="true"/>
         <setting id="show_collection" type="bool" label="30528" default="true"/>
