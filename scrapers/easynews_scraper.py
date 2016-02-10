@@ -136,7 +136,7 @@ class EasyNews_Scraper(scraper.Scraper):
             self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url)
         return url
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         return []
 
     @classmethod

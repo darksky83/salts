@@ -115,7 +115,7 @@ class NoobRoom_Scraper(scraper.Scraper):
         airdate_pattern = "href='([^']+)(?:[^>]+>){3}\s*-\s*\(Original Air Date:\s+{day}-{month}-{year}"
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern, airdate_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         if not self.include_paid and video_type != VIDEO_TYPES.MOVIE: return []
         search_url = urlparse.urljoin(self.base_url, '/search.php?q=')
         search_url += urllib.quote_plus(title)

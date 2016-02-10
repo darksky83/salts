@@ -93,7 +93,7 @@ class OroroTV_Scraper(scraper.Scraper):
         title_pattern = 'data-href="(?P<url>[^"]+)[^>]+class="[^"]*episode[^"]*[^>]+>.\d+\s+(?P<title>[^<]+)'
         return self._default_get_episode_url(show_url, video, episode_pattern, title_pattern)
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         url = urlparse.urljoin(self.base_url, 'http://ororo.tv/en')
         if video_type == VIDEO_TYPES.MOVIE:
             url += '/movies'

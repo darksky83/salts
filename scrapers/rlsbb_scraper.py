@@ -110,7 +110,7 @@ class RlsBB_Scraper(scraper.Scraper):
         settings.append('         <setting id="%s-include_comments" type="bool" label="     %s" default="false" visible="eq(-6,true)"/>' % (name, i18n('include_comments')))
         return settings
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search/')
         search_url += urllib.quote_plus(title)

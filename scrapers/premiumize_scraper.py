@@ -140,7 +140,7 @@ class Premiumize_Scraper(scraper.Scraper):
                     if show_title and norm_title in scraper_utils.normalize_title(show_title):
                         return 'hash=%s' % (item['hash'])
                 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         url = urlparse.urljoin(self.base_url, '/torrent/list')
         js_data = self._http_get(url, cache_limit=0)
         norm_title = scraper_utils.normalize_title(title)

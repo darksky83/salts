@@ -129,7 +129,7 @@ class DirectDownload_Scraper(scraper.Scraper):
         settings = scraper_utils.disable_sub_check(settings)
         return settings
 
-    def search(self, video_type, title, year):
+    def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search?query=')
         search_url += title

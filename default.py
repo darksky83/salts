@@ -467,7 +467,7 @@ def show_history(section, page=1):
             fanart = show['images']['fanart']['full']
             item['episode']['watched'] = True
             menu_items = []
-            queries = {'mode': MODES.SEASONS, 'trakt_id': show['ids']['trakt'], 'fanart': fanart}
+            queries = {'mode': MODES.SEASONS, 'trakt_id': show['ids']['trakt'], 'fanart': fanart, 'title': show['title'], 'year': show['year']}
             menu_items.append((i18n('browse_seasons'), 'Container.Update(%s)' % (kodi.get_plugin_url(queries))),)
             liz, liz_url = make_episode_item(show, item['episode'], menu_items=menu_items)
             label = liz.getLabel()
@@ -820,7 +820,7 @@ def show_progress():
                 date = utils2.make_day(utils2.make_air_date(episode['episode']['first_aired']))
     
                 menu_items = []
-                queries = {'mode': MODES.SEASONS, 'trakt_id': show['ids']['trakt'], 'fanart': fanart}
+                queries = {'mode': MODES.SEASONS, 'trakt_id': show['ids']['trakt'], 'fanart': fanart, 'title': show['title'], 'year': show['year']}
                 menu_items.append((i18n('browse_seasons'), 'Container.Update(%s)' % (kodi.get_plugin_url(queries))),)
     
                 liz, liz_url = make_episode_item(show, episode['episode'], menu_items=menu_items)
@@ -983,8 +983,8 @@ def search_results(section, query, page=1):
     results = trakt_api.search(section, query, page)
     make_dir_from_list(section, results, query={'mode': MODES.SEARCH_RESULTS, 'section': section, 'query': query}, page=page)
 
-@url_dispatcher.register(MODES.SEASONS, ['trakt_id', 'fanart'])
-def browse_seasons(trakt_id, fanart):
+@url_dispatcher.register(MODES.SEASONS, ['trakt_id', 'fanart', 'title', 'year'])
+def browse_seasons(trakt_id, fanart, title, year):
     seasons = sorted(trakt_api.get_seasons(trakt_id), key=lambda x: x['number'])
     info = {}
     if TOKEN:
@@ -994,7 +994,7 @@ def browse_seasons(trakt_id, fanart):
     total_items = len(seasons)
     for season in seasons:
         if kodi.get_setting('show_season0') == 'true' or season['number'] != 0:
-            liz = make_season_item(season, info.get(str(season['number']), {'season': season['number']}), trakt_id, fanart)
+            liz = make_season_item(season, info.get(str(season['number']), {'season': season['number']}), trakt_id, fanart, title, year)
             queries = {'mode': MODES.EPISODES, 'trakt_id': trakt_id, 'season': season['number']}
             kodi.add_item(queries, liz, is_folder=True, total_items=total_items)
     utils2.set_view(CONTENT_TYPES.SEASONS, False)
@@ -1475,12 +1475,13 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
                 elif mode == MODES.SET_URL_SEARCH:
                     temp_title = title
                     temp_year = year
+                    temp_season = season
                     while True:
                         dialog = xbmcgui.Dialog()
                         choices = [i18n('manual_search'), '[COLOR green]%s[/COLOR]' % (i18n('force_no_match'))]
                         try:
-                            log_utils.log('Searching for: |%s|%s|' % (temp_title, temp_year), xbmc.LOGDEBUG)
-                            results = related_list[index]['class'].search(video_type, temp_title, temp_year)
+                            log_utils.log('Searching for: |%s|%s|%s' % (temp_title, temp_year, temp_season), xbmc.LOGDEBUG)
+                            results = related_list[index]['class'].search(video_type, temp_title, temp_year, temp_season)
                             for result in results:
                                 choice = result['title']
                                 if result['year']: choice = '%s (%s)' % (choice, result['year'])
@@ -1491,6 +1492,8 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
                                 keyboard.setHeading(i18n('enter_search'))
                                 text = temp_title
                                 if temp_year: text = '%s (%s)' % (text, temp_year)
+                                if video_type == VIDEO_TYPES.SEASON and temp_season:
+                                    text += ' Season %s' % (temp_season)
                                 keyboard.setDefault(text)
                                 keyboard.doModal()
                                 if keyboard.isConfirmed():
@@ -1501,6 +1504,12 @@ def set_related_url(mode, video_type, title, year, trakt_id, season='', episode=
                                     else:
                                         temp_title = keyboard.getText()
                                         temp_year = ''
+                                    
+                                    match = re.search('Season\s+(\d+)', keyboard.getText())
+                                    if match:
+                                        temp_season = match.group(1)
+                                    else:
+                                        temp_season = ''
                             elif results_index >= 1:
                                 related = related_list[index]
                                 if results_index == 1:
@@ -2087,7 +2096,7 @@ def make_dir_from_cal(mode, start_date, days):
             date_time = date
 
         menu_items = []
-        queries = {'mode': MODES.SEASONS, 'trakt_id': show['ids']['trakt'], 'fanart': fanart}
+        queries = {'mode': MODES.SEASONS, 'trakt_id': show['ids']['trakt'], 'fanart': fanart, 'title': show['title'], 'year': show['year']}
         menu_items.append((i18n('browse_seasons'), 'Container.Update(%s)' % (kodi.get_plugin_url(queries))),)
 
         liz, liz_url = make_episode_item(show, episode, show_subs=False, menu_items=menu_items)
@@ -2103,7 +2112,7 @@ def make_dir_from_cal(mode, start_date, days):
     kodi.set_content(CONTENT_TYPES.EPISODES)
     kodi.end_of_directory()
 
-def make_season_item(season, info, trakt_id, fanart):
+def make_season_item(season, info, trakt_id, fanart, title, year):
     label = '%s %s' % (i18n('season'), season['number'])
     season['images']['fanart'] = {}
     season['images']['fanart']['full'] = fanart
@@ -2122,12 +2131,15 @@ def make_season_item(season, info, trakt_id, fanart):
     if TOKEN:
         queries = {'mode': MODES.RATE, 'section': SECTIONS.TV, 'season': season['number'], 'id_type': 'trakt', 'show_id': trakt_id}
         menu_items.append((i18n('rate_on_trakt'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
-
         queries = {'mode': MODES.TOGGLE_WATCHED, 'section': SECTIONS.TV, 'season': season['number'], 'id_type': 'trakt', 'show_id': trakt_id, 'watched': watched}
         menu_items.append((label, 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
 
     queries = {'mode': MODES.SET_VIEW, 'content_type': CONTENT_TYPES.SEASONS}
     menu_items.append((i18n('set_as_season_view'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+    queries = {'mode': MODES.SET_URL_SEARCH, 'video_type': VIDEO_TYPES.SEASON, 'title': title, 'year': year, 'trakt_id': trakt_id, 'season': season['number']}
+    menu_items.append(('Set Related Url (Search)', 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+    queries = {'mode': MODES.SET_URL_MANUAL, 'video_type': VIDEO_TYPES.SEASON, 'title': title, 'year': year, 'trakt_id': trakt_id, 'season': season['number']}
+    menu_items.append(('Set Related Url (Manual)', 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
 
     liz.addContextMenuItems(menu_items, replaceItems=True)
     return liz
@@ -2232,6 +2244,8 @@ def make_episode_item(show, episode, show_subs=True, menu_items=None):
 
     queries = {'mode': MODES.SET_URL_SEARCH, 'video_type': VIDEO_TYPES.TVSHOW, 'title': show['title'], 'year': show['year'], 'trakt_id': show['ids']['trakt']}
     menu_items.append((i18n('set_rel_show_url_search'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
+    queries = {'mode': MODES.SET_URL_SEARCH, 'video_type': VIDEO_TYPES.SEASON, 'title': show['title'], 'year': show['year'], 'trakt_id': show['ids']['trakt'], 'season': episode['season']}
+    menu_items.append(('Set Related Season Url (Search)', 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
     queries = {'mode': MODES.SET_URL_MANUAL, 'video_type': VIDEO_TYPES.EPISODE, 'title': show['title'], 'year': show['year'], 'season': episode['season'],
                'episode': episode['number'], 'ep_title': episode['title'], 'ep_airdate': air_date, 'trakt_id': show['ids']['trakt']}
     menu_items.append((i18n('set_rel_url_manual'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
@@ -2256,7 +2270,7 @@ def make_item(section_params, show, menu_items=None):
         liz.setProperty('UnWatchedEpisodes', str(info['UnWatchedEpisodes']))
 
     if section_params['section'] == SECTIONS.TV:
-        queries = {'mode': section_params['next_mode'], 'trakt_id': trakt_id, 'fanart': liz.getProperty('fanart_image')}
+        queries = {'mode': section_params['next_mode'], 'trakt_id': trakt_id, 'fanart': liz.getProperty('fanart_image'), 'title': show['title'], 'year': show['year']}
         info['TVShowTitle'] = info['title']
     else:
         queries = {'mode': section_params['next_mode'], 'video_type': section_params['video_type'], 'title': show['title'], 'year': show['year'], 'trakt_id': trakt_id}
