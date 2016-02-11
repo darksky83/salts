@@ -28,6 +28,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 BASE_URL = 'http://moviehdmax.com'
+XHR = {'X-Requested-With': 'XMLHttpRequest'}
 
 class MoxieHDMax_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -38,7 +39,7 @@ class MoxieHDMax_Scraper(scraper.Scraper):
 
     @classmethod
     def provides(cls):
-        return frozenset([VIDEO_TYPES.MOVIE])
+        return frozenset([VIDEO_TYPES.MOVIE, VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE])
 
     @classmethod
     def get_name(cls):
@@ -51,34 +52,69 @@ class MoxieHDMax_Scraper(scraper.Scraper):
         return '[%s] %s' % (item['quality'], item['host'])
 
     def get_sources(self, video):
-        source_url = self.get_url(video)
         sources = []
+        source_url = self.get_url(video)
         if source_url and source_url != FORCE_NO_MATCH:
-            url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=.5)
+            if video.video_type == VIDEO_TYPES.MOVIE:
+                streams = self.__get_movie_sources(source_url)
+            else:
+                streams = self.__get_episode_sources(source_url)
             
-            for match in re.finditer('''<source[^>]+src=['"]([^'"]+)([^>]+)''', html):
-                stream_url, extra = match.groups()
+            for stream_url in streams:
+                stream_url2 = stream_url + '|User-Agent=%s' % (scraper_utils.get_ua())
                 host = self._get_direct_hostname(stream_url)
-                if host == 'gvideo':
-                    quality = scraper_utils.gv_get_quality(stream_url)
-                else:
-                    match = re.search('''data-res\s*=\s*["']([^"']+)''', extra)
-                    if match:
-                        height = re.sub('(hd|px)', '', match.group(1))
-                        quality = scraper_utils.height_get_quality(height)
-                    else:
-                        quality = QUALITIES.HIGH
-                
-                stream_url += '|User-Agent=%s' % (scraper_utils.get_ua())
-                source = {'multi-part': False, 'url': stream_url, 'host': host, 'class': self, 'quality': quality, 'views': None, 'rating': None, 'direct': True}
+                source = {'multi-part': False, 'url': stream_url2, 'host': host, 'class': self, 'quality': streams[stream_url], 'views': None, 'rating': None, 'direct': True}
                 sources.append(source)
 
         return sources
 
+    def __get_episode_sources(self, source_url):
+        sources = {}
+        url = urlparse.urljoin(self.base_url, source_url)
+        html = self._http_get(url, headers=XHR, method='POST', cache_limit=0)
+        js_data = scraper_utils.parse_json(html, url)
+        if 'sources' in js_data:
+            for source in js_data['sources']:
+                stream_url = source['host']
+                if self._get_direct_hostname(stream_url) == 'gvideo':
+                    quality = scraper_utils.gv_get_quality(stream_url)
+                elif 'quality' in source:
+                    quality = scraper_utils.height_get_quality(source['quality'])
+                else:
+                    quality = QUALITIES.HIGH
+                sources[source['host']] = quality
+        return sources
+    
+    def __get_movie_sources(self, source_url):
+        url = urlparse.urljoin(self.base_url, source_url)
+        html = self._http_get(url, cache_limit=.5)
+        sources = {}
+        for match in re.finditer('''<source[^>]+src=['"]([^'"]+)([^>]+)''', html):
+            source, extra = match.groups()
+            host = self._get_direct_hostname(source)
+            if host == 'gvideo':
+                quality = scraper_utils.gv_get_quality(source)
+            else:
+                match = re.search('''data-res\s*=\s*["']([^"']+)''', extra)
+                if match:
+                    height = re.sub('(hd|px)', '', match.group(1))
+                    quality = scraper_utils.height_get_quality(height)
+                else:
+                    quality = QUALITIES.HIGH
+            sources[source] = quality
+            return sources
+        
     def get_url(self, video):
         return self._default_get_url(video)
 
+    def _get_episode_url(self, season_url, video):
+        url = urlparse.urljoin(self.base_url, season_url)
+        html = self._http_get(url, cache_limit=8)
+        for label in dom_parser.parse_dom(html, 'a', {'class': 'episodelink'}):
+            if int(label) == int(video.episode):
+                ep_url = season_url.replace('/watch/', '/getepisode/') + '?p=%s' % (video.episode)
+                return ep_url
+    
     def search(self, video_type, title, year, season=''):
         results = []
         search_url = urlparse.urljoin(self.base_url, '/search/result?s=%s&selected=false')
@@ -89,13 +125,18 @@ class MoxieHDMax_Scraper(scraper.Scraper):
             if match:
                 match_url, match_title_year = match.groups()
                 is_season = re.search('Season\s+\d+\s+', match_title_year, re.I)
-                if not is_season and video_type == VIDEO_TYPES.MOVIE:
+                if (not is_season and video_type == VIDEO_TYPES.MOVIE) or (is_season and video_type == VIDEO_TYPES.SEASON):
                     match = re.search('(.*?)\s+\((\d{4})[^)]*\)$', match_title_year)
                     if match:
                         match_title, match_year = match.groups()
                     else:
                         match_title = match_title_year
                         match_year = ''
+
+                    log_utils.log('%s - %s' % (match_title, season))
+                    if video_type == VIDEO_TYPES.SEASON:
+                        if season and not re.search('Season\s+%s$' % (season), match_title, re.I):
+                            continue
             
                     if not year or not match_year or year == match_year:
                         result = {'title': match_title, 'url': scraper_utils.pathify_url(match_url), 'year': match_year}
