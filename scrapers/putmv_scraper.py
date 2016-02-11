@@ -30,7 +30,7 @@ import scraper
 
 
 BASE_URL = 'http://putmv.com'
-GVIDEO_NAMES = ['english sub', 'picasa']
+GVIDEO_NAMES = ['english sub', 'picasa', 'putlocker']
 
 class PutMV_Scraper(scraper.Scraper):
     base_url = BASE_URL
