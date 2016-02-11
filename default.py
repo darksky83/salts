@@ -754,7 +754,7 @@ def get_progress(cached=True):
                 continue
             
             worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, cached, .08])
-            percent = i * 25 / total + 10
+            percent = (i + 1) * 25 / total + 10
             pd.update(percent, line1=i18n('req_progress') % (show['show']['title']))
             worker_count += 1
             workers.append(worker)
@@ -1698,26 +1698,20 @@ def toggle_url_exists(trakt_id):
 @url_dispatcher.register(MODES.UPDATE_SUBS)
 def update_subscriptions():
     log_utils.log('Updating Subscriptions', xbmc.LOGDEBUG)
-    dialog = None
-    if kodi.get_setting(MODES.UPDATE_SUBS + '-notify') == 'true':
-        dialog = xbmcgui.DialogProgressBG()
-        dialog.create('Stream All The Sources', i18n('updating_subscriptions'))
-        dialog.update(0)
-
-    update_strms(SECTIONS.TV, dialog)
-    if kodi.get_setting('include_movies') == 'true':
-        update_strms(SECTIONS.MOVIES, dialog)
-    if kodi.get_setting('library-update') == 'true':
-        xbmc.executebuiltin('UpdateLibrary(video)')
-    if kodi.get_setting('cleanup-subscriptions') == 'true':
-        clean_subs()
-
-    now = datetime.datetime.now()
-    db_connection.set_setting('%s-last_run' % MODES.UPDATE_SUBS, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
-
-    if kodi.get_setting(MODES.UPDATE_SUBS + '-notify') == 'true':
-        dialog.close()
-        if kodi.get_setting('auto-' + MODES.UPDATE_SUBS) == 'true':
+    active = kodi.get_setting(MODES.UPDATE_SUBS + '-notify') == 'true'
+    with gui_utils.ProgressDialog('Stream All The Sources', line1=i18n('updating_subscriptions'), background=True, active=active) as pd:
+        update_strms(SECTIONS.TV, pd)
+        if kodi.get_setting('include_movies') == 'true':
+            update_strms(SECTIONS.MOVIES, pd)
+        if kodi.get_setting('library-update') == 'true':
+            xbmc.executebuiltin('UpdateLibrary(video)')
+        if kodi.get_setting('cleanup-subscriptions') == 'true':
+            clean_subs()
+    
+        now = datetime.datetime.now()
+        db_connection.set_setting('%s-last_run' % MODES.UPDATE_SUBS, now.strftime("%Y-%m-%d %H:%M:%S.%f"))
+    
+        if active and kodi.get_setting('auto-' + MODES.UPDATE_SUBS) == 'true':
             kodi.notify(msg=i18n('next_update') % (float(kodi.get_setting(MODES.UPDATE_SUBS + '-interval'))), duration=5000)
     xbmc.executebuiltin("XBMC.Container.Refresh")
 
@@ -1733,9 +1727,11 @@ def update_strms(section, dialog=None):
 
     length = len(items)
     for i, item in enumerate(items):
-        if dialog:
-            percent_progress = i * 100 / length
-            dialog.update(percent_progress, 'Stream All The Sources', '%s %s: %s (%s)' % (i18n('updating'), section, re.sub(' \(\d{4}\)$', '', item['title']), item['year']))
+        percent_progress = (i + 1) * 100 / length
+        title = re.sub('\s+\(\d{4}\)$', '', item['title'])
+        if isinstance(title, unicode): title = title.encode('utf-8')
+            
+        dialog.update(percent_progress, '%s %s: %s (%s)' % (i18n('updating'), section, title, item['year']))
         try:
             add_to_library(section_params['video_type'], item['title'], item['year'], item['ids']['trakt'])
         except Exception as e:
