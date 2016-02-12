@@ -321,7 +321,7 @@ def filter_quality(video_type, hosters):
     if qual_filter == 5:
         return hosters
     else:
-        return [hoster for hoster in hosters if Q_ORDER[hoster['quality']] <= qual_filter]
+        return [hoster for hoster in hosters if hoster['quality'] is not None and Q_ORDER[hoster['quality']] <= qual_filter]
 
 def get_sort_key(item):
     item_sort_key = []
