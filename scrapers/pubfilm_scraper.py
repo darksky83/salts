@@ -155,12 +155,12 @@ class PubFilm_Scraper(scraper.Scraper):
             match = re.search('href="([^"]+)[^>]*>([^<]+)', item)
             if match:
                 match_url, match_title_year = match.groups()
-                is_season = re.search('Season\s+\d+$', match_title_year, re.I)
+                is_season = re.search('Season\s+(\d+)$', match_title_year, re.I)
                 if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
                     match_year = ''
                     if video_type == VIDEO_TYPES.SEASON:
                         match_title = match_title_year
-                        if season and not re.search('Season\s+%s$' % (season), match_title_year, re.I):
+                        if season and int(is_season.group(1)) != int(season):
                             continue
                     else:
                         match = re.search('(.*?)\s+(\d{4})$', match_title_year)

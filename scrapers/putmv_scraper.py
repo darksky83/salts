@@ -110,6 +110,10 @@ class PutMV_Scraper(scraper.Scraper):
     def get_url(self, video):
         return self._default_get_url(video)
 
+    def _get_episode_url(self, season_url, video):
+        episode_pattern = 'href="([^"]+)[^>]*title="Watch\s+Episode\s+%s"' % (video.episode)
+        return self._default_get_episode_url(season_url, video, episode_pattern)
+    
     def search(self, video_type, title, year, season=''):
         search_url = urlparse.urljoin(self.base_url, '/search/%s.html' % urllib.quote_plus(title))
         html = self._http_get(search_url, cache_limit=.25)
@@ -120,16 +124,26 @@ class PutMV_Scraper(scraper.Scraper):
                 match = re.search('class="movie-name".*?href="([^"]+)[^>]+>([^<]+)', item)
                 if match:
                     url, match_title = match.groups()
-                    
-                    match_year = ''
-                    for info_frag in dom_parser.parse_dom(item, 'p', {'class': 'info'}):
-                        match = re.search('(\d{4})', info_frag)
-                        if match:
-                            match_year = match.group(1)
-                            break
+                    is_season = re.search('\s+-\s+[Ss](\d+)$', match_title)
+                    if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
+                        match_year = ''
+                        if video_type == VIDEO_TYPES.MOVIE:
+                            for info_frag in dom_parser.parse_dom(item, 'p', {'class': 'info'}):
+                                match = re.search('(\d{4})', info_frag)
+                                if match:
+                                    match_year = match.group(1)
+                                    break
                             
-                    if (not year or not match_year or year == match_year):
-                        result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
-                        results.append(result)
+                            if not match_year:
+                                match = re.search('(\d{4})$', url)
+                                if match:
+                                    match_year = match.group(1)
+                        else:
+                            if season and int(is_season.group(1)) != int(season):
+                                continue
+                                
+                        if (not year or not match_year or year == match_year):
+                            result = {'url': scraper_utils.pathify_url(url), 'title': match_title, 'year': match_year}
+                            results.append(result)
         
         return results
