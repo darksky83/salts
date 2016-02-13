@@ -31,8 +31,6 @@ import scraper
 
 
 BASE_URL = 'http://view47.com'
-EPID_URL = '/ip.temp/swf/plugins/ipplugins.php'
-JSON_URL = '/ip.temp/swf/plugins/plugins_player.php'
 GVIDEO_NAMES = ['picasa']
 HOSTS = {'vidag': 'vid.ag', 'videott': 'video.tt'}
 
