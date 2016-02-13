@@ -271,5 +271,6 @@ STRINGS = {
     'reset_rel_urls': 30260,
     'scraper_url_reset': 30261,
     'anticipated': 30262,
-    'set_as_sources_view': 30263
+    'set_as_sources_view': 30263,
+    'set_rel_season_url_search': 30264
 }

@@ -1070,6 +1070,10 @@ msgctxt "#30263"
 msgid "Set as Sources View"
 msgstr ""
 
+msgctxt "#30264"
+msgid "Set Related Season Url (Search)"
+msgstr ""
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr ""
