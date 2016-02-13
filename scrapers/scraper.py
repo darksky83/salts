@@ -40,7 +40,7 @@ from salts_lib.constants import Q_ORDER
 from salts_lib.constants import SHORT_MONS
 from salts_lib.constants import VIDEO_TYPES
 from salts_lib.db_utils import DB_Connection
-from salts_lib.utils2 import i18n
+from salts_lib.kodi import i18n
 
 
 BASE_URL = ''

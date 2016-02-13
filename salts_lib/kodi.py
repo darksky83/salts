@@ -25,6 +25,8 @@ import urlparse
 import sys
 import os
 import re
+import strings
+import log_utils
 
 addon = xbmcaddon.Addon()
 get_setting = addon.getSetting
@@ -138,3 +140,10 @@ class WorkingDialog(object):
     
     def __exit__(self, type, value, traceback):
         xbmc.executebuiltin('Dialog.Close(busydialog)')
+
+def i18n(string_id):
+    try:
+        return addon.getLocalizedString(strings.STRINGS[string_id]).encode('utf-8', 'ignore')
+    except Exception as e:
+        log_utils.log('Failed String Lookup: %s (%s)' % (string_id, e))
+        return string_id

@@ -32,10 +32,10 @@ from salts_lib.srt_scraper import SRT_Scraper
 from salts_lib.trakt_api import Trakt_API, TransientTraktError, TraktNotFoundError, TraktError, TraktAuthError
 from salts_lib import utils
 from salts_lib import utils2
-from salts_lib.utils2 import i18n
 from salts_lib import log_utils
 from salts_lib import gui_utils
 from salts_lib import kodi
+from salts_lib.kodi import i18n
 from salts_lib.constants import *
 from scrapers import *  # import all scrapers into this namespace
 from scrapers import ScraperVideo

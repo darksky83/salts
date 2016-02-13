@@ -25,7 +25,7 @@ import xbmcvfs
 import xbmcgui
 import log_utils
 import kodi
-from utils2 import i18n
+from kodi import i18n
 
 def enum(**enums):
     return type('Enum', (), enums)
