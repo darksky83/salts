@@ -1066,6 +1066,10 @@ msgctxt "#30262"
 msgid "Anticipated %s"
 msgstr ""
 
+msgctxt "#30263"
+msgid "Set as Sources View"
+msgstr ""
+
 msgctxt "#30500"
 msgid "Addon Theme"
 msgstr ""

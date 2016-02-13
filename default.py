@@ -1376,25 +1376,24 @@ def pick_source_dir(mode, hosters, video_type, trakt_id, season='', episode=''):
     if mode == MODES.DOWNLOAD_SOURCE:
         next_mode = MODES.DIRECT_DOWNLOAD
         folder = False
-        playable = 'false'
+        playable = False
     else:
         next_mode = MODES.RESOLVE_SOURCE
         folder = False
-        playable = 'true'
+        playable = True
 
     hosters_len = len(hosters)
     for item in hosters:
         if item['multi-part']:
             continue
 
+        menu_items = []
         item['label'] = utils2.format_source_label(item)
-        # log_utils.log(item, xbmc.LOGDEBUG)
+        queries = {'mode': MODES.SET_VIEW, 'content_type': CONTENT_TYPES.SOURCES}
+        menu_items.append((i18n('set_as_sources_view'), 'RunPlugin(%s)' % (kodi.get_plugin_url(queries))),)
         queries = {'mode': next_mode, 'class_url': item['url'], 'direct': item['direct'], 'video_type': video_type, 'trakt_id': trakt_id,
-                   'season': season, 'episode': episode, 'class_name': item['class'].get_name(), 'rand': time.time()}
-        url = kodi.get_plugin_url(queries)
-        list_item = xbmcgui.ListItem(item['label'])
-        list_item.setProperty('isPlayable', playable)
-        xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=folder, totalItems=hosters_len)
+                   'season': season, 'episode': episode, 'class_name': item['class'].get_name()}
+        kodi.create_item(queries, item['label'], is_folder=folder, is_playable=playable, total_items=hosters_len, menu_items=menu_items)
     utils2.set_view(CONTENT_TYPES.SOURCES, False)
     kodi.end_of_directory()
 
