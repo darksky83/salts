@@ -43,7 +43,7 @@ class View47_Scraper(scraper.Scraper):
 
     @classmethod
     def provides(cls):
-        return frozenset([VIDEO_TYPES.MOVIE])
+        return frozenset([VIDEO_TYPES.MOVIE, VIDEO_TYPES.SEASON, VIDEO_TYPES.EPISODE])
 
     @classmethod
     def get_name(cls):
@@ -96,25 +96,33 @@ class View47_Scraper(scraper.Scraper):
         return self._default_get_url(video)
 
     def search(self, video_type, title, year, season=''):
-        search_url = urlparse.urljoin(self.base_url, '/search.php?q=%s&limit=20&timestamp=%s' % (urllib.quote_plus(title), time.time()))
+        search_url = urlparse.urljoin(self.base_url, '/search.php?q=%s&limit=20&timestamp=%s' % (urllib.quote_plus(title), int(time.time())))
         html = self._http_get(search_url, cache_limit=.25)
         results = []
         items = dom_parser.parse_dom(html, 'li')
         if len(items) >= 2:
             items = items[1:]
             for item in items:
-                url = dom_parser.parse_dom(item, 'a', ret='href')
+                match_url = dom_parser.parse_dom(item, 'a', ret='href')
                 match_title_year = dom_parser.parse_dom(item, 'strong')
-                if url and match_title_year:
-                    url = url[0]
-                    match_title_year = match_title_year[0].replace('<strong>', '').replace('</strong>', '')
-                    match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
-                    if match:
-                        match_title, match_year = match.groups()
-                    else:
-                        match_title = match_title_year
-                        match_year = ''
+                if match_url and match_title_year:
+                    match_url = match_url[0]
+                    match_title_year = re.sub('</?strong>', '', match_title_year[0])
+                    is_season = re.search('Season\s+(\d+)$', match_title_year, re.I)
+                    if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
+                        if video_type == VIDEO_TYPES.MOVIE:
+                            match = re.search('(.*?)(?:\s+\(?(\d{4})\)?)', match_title_year)
+                            if match:
+                                match_title, match_year = match.groups()
+                            else:
+                                match_title = match_title_year
+                                match_year = ''
+                        else:
+                            if season and int(is_season.group(1)) != int(season):
+                                continue
+                            match_title = match_title_year
+                            match_year = ''
                     
-                    result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(url)}
+                    result = {'title': match_title, 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
                     results.append(result)
         return results

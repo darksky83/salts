@@ -123,7 +123,7 @@ class TuneMovie_Scraper(scraper.Scraper):
             match = re.search('title="([^"]+)"\s+href="([^"]+)"', thumb)
             if match:
                 match_title, url = match.groups()
-                is_season = re.search('Season\s+(\d+)$', match_title)
+                is_season = re.search('Season\s+(\d+)$', match_title, re.I)
                 if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
                     match_year = ''
                     if video_type == VIDEO_TYPES.MOVIE:
