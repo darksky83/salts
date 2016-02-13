@@ -156,7 +156,7 @@ def delete_bookmark(bookmark_id):
 
 @url_dispatcher.register(MODES.SHOW_VIEWS)
 def show_views():
-    for content_type in ['movies', 'tvshows', 'seasons', 'episodes']:
+    for content_type in ['movies', 'tvshows', 'seasons', 'episodes', 'sources']:
         kodi.create_item({'mode': MODES.BROWSE_VIEW, 'content_type': content_type}, i18n('set_default_x_view') % (content_type.capitalize()),
                          thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.end_of_directory()
@@ -1395,7 +1395,7 @@ def pick_source_dir(mode, hosters, video_type, trakt_id, season='', episode=''):
         list_item = xbmcgui.ListItem(item['label'])
         list_item.setProperty('isPlayable', playable)
         xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, list_item, isFolder=folder, totalItems=hosters_len)
-
+    utils2.set_view(CONTENT_TYPES.SOURCES, False)
     kodi.end_of_directory()
 
 @url_dispatcher.register(MODES.SET_URL_MANUAL, ['mode', 'video_type', 'title', 'year', 'trakt_id'], ['season', 'episode', 'ep_title', 'ep_airdate'])

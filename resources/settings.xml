@@ -56,6 +56,7 @@
         <setting id="tvshows_view" label="30542" type="number" default="0" visible="true"/>
         <setting id="seasons_view" label="30543" type="number" default="0" visible="true"/>
         <setting id="episodes_view" label="30544" type="number" default="0" visible="true"/>
+        <setting id="sources_view" label="30672" type="number" default="0" visible="true"/>
     </category>
 
     <category label="Trakt.tv">

@@ -1765,3 +1765,6 @@ msgctxt "#30671"
 msgid "Show Anticipated"
 msgstr ""
 
+msgctxt "#30672"
+msgid "Default Sources View (0 = None)"
+msgstr ""
