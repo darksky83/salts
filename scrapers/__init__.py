@@ -97,7 +97,7 @@ def update_settings():
 def update_all_scrapers():
         try: last_check = int(kodi.get_setting('last_list_check'))
         except: last_check = 0
-        now = time.time()
+        now = int(time.time())
         list_url = kodi.get_setting('scraper_url')
         scraper_password = kodi.get_setting('scraper_password')
         list_path = os.path.join(kodi.translate_path(kodi.get_profile()), 'scraper_list.txt')
@@ -109,7 +109,8 @@ def update_all_scrapers():
                     with open(list_path, 'w') as f:
                         f.write(scraper_list)
     
-                    kodi.set_setting('last_list_check', str(int(now)))
+                    kodi.set_setting('last_list_check', str(now))
+                    kodi.set_setting('scraper_last_update', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(now)))
                     for line in scraper_list.split('\n'):
                         line = line.replace(' ', '')
                         if line:

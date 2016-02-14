@@ -124,6 +124,7 @@
         <settind id="last_list_check" type="number" default="0" visible="false"/>
         <setting id="scraper_url" type="text" label="30211" default="" visible="eq(-1,true)"/>
         <setting id="scraper_password" type="text" label="30212" option="hidden" default="" visible="eq(-2,true)"/>
+        <setting id="scraper_last_update" type="text" label="30673" default="" visible="eq(-3,true)"/>
         <setting id='random_sso' type="bool" visible="false" default="true"/>
     </category>
     
