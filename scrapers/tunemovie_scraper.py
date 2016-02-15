@@ -100,7 +100,6 @@ class TuneMovie_Scraper(scraper.Scraper):
         html = self._http_get(link, cache_limit=.5)
         match = re.search('base64\.decode\("([^"]+)', html, re.I)
         if match:
-            log_utils.log(match.group(1))
             match = re.search('proxy\.link=tunemovie\*([^&]+)', base64.b64decode(match.group(1)))
             if match:
                 picasa_url = scraper_utils.gk_decrypt(self.get_name(), GK_KEY, match.group(1))
