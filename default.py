@@ -1248,14 +1248,15 @@ def play_source(mode, hoster_url, direct, video_type, trakt_id, dialog, season='
                     kodi.notify(msg=i18n('resolve_failed') % (msg), duration=7500)
                     return False
     
-        resume_point = 0
-        pseudo_tv = xbmcgui.Window(10000).getProperty('PseudoTVRunning').lower()
-        if pseudo_tv != 'true' and mode not in [MODES.DOWNLOAD_SOURCE, MODES.DIRECT_DOWNLOAD]:
-            if utils.bookmark_exists(trakt_id, season, episode):
-                if utils.get_resume_choice(trakt_id, season, episode):
-                    resume_point = utils.get_bookmark(trakt_id, season, episode)
-                    log_utils.log('Resume Point: %s' % (resume_point), xbmc.LOGDEBUG)
+    resume_point = 0
+    pseudo_tv = xbmcgui.Window(10000).getProperty('PseudoTVRunning').lower()
+    if pseudo_tv != 'true' and mode not in [MODES.DOWNLOAD_SOURCE, MODES.DIRECT_DOWNLOAD]:
+        if utils.bookmark_exists(trakt_id, season, episode):
+            if utils.get_resume_choice(trakt_id, season, episode):
+                resume_point = utils.get_bookmark(trakt_id, season, episode)
+                log_utils.log('Resume Point: %s' % (resume_point), xbmc.LOGDEBUG)
     
+    with kodi.WorkingDialog():
         try:
             win = xbmcgui.Window(10000)
             win.setProperty('salts.playing', 'True')
