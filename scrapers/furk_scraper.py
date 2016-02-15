@@ -142,7 +142,7 @@ class Furk_Scraper(scraper.Scraper):
                     hoster['extra'] = item['name']
                     hosters.append(hoster)
                 else:
-                    log_utils.log('Furk.net result skipped - no playlist: |%s|' % (item), log_utils.LOGDEBUG)
+                    log_utils.log('Furk.net result skipped - no playlist: |%s|' % (json.dumps(item)), log_utils.LOGDEBUG)
                     
         return hosters
     
