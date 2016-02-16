@@ -502,9 +502,9 @@ class Scraper(object):
                         if match:
                             q_str = match.group(1)
                             quality = scraper_utils.blog_get_quality(video, q_str, '')
-                            # print 'result: |%s|%s|%s|%s|' % (result, q_str, quality, Q_ORDER[quality])
+                            log_utils.log('result: |%s|%s|%s|%s|' % (result, q_str, quality, Q_ORDER[quality]), log_utils.LOGDEBUG)
                             if Q_ORDER[quality] > best_qorder:
-                                # print 'Setting best as: |%s|%s|%s|%s|' % (result, q_str, quality, Q_ORDER[quality])
+                                log_utils.log('Setting best as: |%s|%s|%s|%s|' % (result, q_str, quality, Q_ORDER[quality]), log_utils.LOGDEBUG)
                                 best_result = result
                                 best_qorder = Q_ORDER[quality]
 
