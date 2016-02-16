@@ -67,25 +67,8 @@ class MyVidLinks_Scraper(scraper.Scraper):
             else:
                 views = None
 
-            if video.video_type == VIDEO_TYPES.MOVIE:
-                return self.__get_movie_links(video, views, html)
-            else:
-                return self.__get_episode_links(video, views, html)
+            return self.__get_episode_links(video, views, html)
         return hosters
-
-    def __get_movie_links(self, video, views, html):
-        q_str = ''
-        fragment = dom_parser.parse_dom(html, 'div', {'class': 'post-title'})
-        if fragment:
-            q_str = fragment[0]
-        
-        match = re.search('<p>Size:(.*)', html, re.DOTALL)
-        if match:
-            fragment = match.group(1)
-        else:
-            fragment = html
-
-        return self.__get_links(video, views, fragment, q_str)
 
     def __get_episode_links(self, video, views, html):
         hosters = []
