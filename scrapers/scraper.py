@@ -425,7 +425,7 @@ class Scraper(object):
                 post_title += '- [%s]' % (post_data['quality'])
 
             try: filter_days = int(kodi.get_setting('%s-filter' % (self.get_name())))
-            except: filter_days = 0
+            except ValueError: filter_days = 0
             if filter_days and date_format and 'date' in post_data:
                 filter_days = datetime.timedelta(days=filter_days)
                 try: post_date = datetime.datetime.strptime(post_data['date'], date_format).date()
