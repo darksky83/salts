@@ -417,7 +417,6 @@ class Scraper(object):
                 show_title = title
         norm_title = scraper_utils.normalize_title(show_title)
 
-        filter_days = datetime.timedelta(days=int(kodi.get_setting('%s-filter' % (self.get_name()))))
         today = datetime.date.today()
         for match in re.finditer(post_pattern, html, re.DOTALL):
             post_data = match.groupdict()
@@ -425,7 +424,10 @@ class Scraper(object):
             if 'quality' in post_data:
                 post_title += '- [%s]' % (post_data['quality'])
 
+            try: filter_days = int(kodi.get_setting('%s-filter' % (self.get_name())))
+            except: filter_days = 0
             if filter_days and date_format and 'date' in post_data:
+                filter_days = datetime.timedelta(days=filter_days)
                 try: post_date = datetime.datetime.strptime(post_data['date'], date_format).date()
                 except TypeError: post_date = datetime.datetime(*(time.strptime(post_data['date'], date_format)[0:6])).date()
                 if today - post_date > filter_days:
