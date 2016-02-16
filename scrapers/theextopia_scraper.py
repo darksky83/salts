@@ -33,7 +33,7 @@ import scraper
 BASE_URL = 'http://www.theextopia.com'
 IMAGES = {'1080p': QUALITIES.HD1080, '720p': QUALITIES.HD720}
 
-class MyVidLinks_Scraper(scraper.Scraper):
+class TheExtopia_Scraper(scraper.Scraper):
     base_url = BASE_URL
 
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
