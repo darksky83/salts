@@ -52,7 +52,10 @@ class TheExtopia_Scraper(scraper.Scraper):
         return link
 
     def format_source_label(self, item):
-        return '[%s] %s (%s Views)' % (item['quality'], item['host'], item['views'])
+        label = '[%s] %s' % (item['quality'], item['host'])
+        if 'views' in item and item['views']:
+            label += ' (%s Views)' % (item['views'])
+        return label
 
     def get_sources(self, video):
         source_url = self.get_url(video)
