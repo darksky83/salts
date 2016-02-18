@@ -121,10 +121,10 @@
         <setting id="auto-disable" type="enum" label="30586" lvalues="30511|30638|30639" default="1"/>
         <setting id="disable-limit" type="slider" label="30657" default="150" range="100,25,250" option="int" enable="!eq(-1,0)"/>
         <setting id="scraper_download" type="bool" visible="false" default="false"/>
-        <settind id="last_list_check" type="number" default="0" visible="false"/>
         <setting id="scraper_url" type="text" label="30211" default="" visible="eq(-1,true)"/>
         <setting id="scraper_password" type="text" label="30212" option="hidden" default="" visible="eq(-2,true)"/>
         <setting id="scraper_last_update" type="text" label="30673" default="" visible="eq(-3,true)"/>
+        <settind id="last_list_check" type="number" default="0" visible="false"/>
         <setting id='random_sso' type="bool" visible="false" default="true"/>
     </category>
     
