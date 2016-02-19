@@ -120,7 +120,7 @@ class Flixanity_Scraper(scraper.Scraper):
             if item['meta'].upper().startswith(media_type):
                 match_year = str(item['year']) if 'year' in item and item['year'] else ''
                 if not year or not match_year or year == match_year:
-                    result = {'title': item['title'], 'url': scraper_utils.pathify_url(item['permalink']), 'year': match_year}
+                    result = {'title': scraper_utils.cleanse_title(item['title']), 'url': scraper_utils.pathify_url(item['permalink']), 'year': match_year}
                     results.append(result)
 
         return results
