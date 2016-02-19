@@ -124,6 +124,7 @@ class SezonLukDizi_Scraper(scraper.Scraper):
             airdate_pattern = '''href=['"]([^"']+)[^>]*>[^<]*</a>\s*</td>\s*<td class="right aligned">{p_day}\.{p_month}\.{year}'''
             headers = XHR
             headers['Content-Length'] = 0
+            headers['Referer'] = url
             result = self._default_get_episode_url(season_url, video, episode_pattern, title_pattern, airdate_pattern, headers=headers, method='POST')
             if result and 'javascript:;' not in result:
                 return result
