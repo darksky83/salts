@@ -122,7 +122,9 @@ class SezonLukDizi_Scraper(scraper.Scraper):
             episode_pattern = '''href=['"]([^'"]*/%s-sezon-%s-[^'"]*bolum[^'"]*)''' % (video.season, video.episode)
             title_pattern = '''href=['"](?P<url>[^'"]+)[^>]*>(?P<title>[^<]+)'''
             airdate_pattern = '''href=['"]([^"']+)[^>]*>[^<]*</a>\s*</td>\s*<td class="right aligned">{p_day}\.{p_month}\.{year}'''
-            result = self._default_get_episode_url(season_url, video, episode_pattern, title_pattern, airdate_pattern, headers=XHR, method='POST')
+            headers = XHR
+            headers['Content-Length'] = 0
+            result = self._default_get_episode_url(season_url, video, episode_pattern, title_pattern, airdate_pattern, headers=headers, method='POST')
             if result and 'javascript:;' not in result:
                 return result
 
