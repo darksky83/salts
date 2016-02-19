@@ -95,7 +95,7 @@ class MovieWatcher_Scraper(scraper.Scraper):
         if match:
             season_url = match.group(1)
             episode_pattern = 'href="([^"]*season-%s/episode-%s(?!\d)[^"]*)' % (video.season, video.episode)
-            title_pattern = 'href="([^"]*season-\d+/episode-\d+[^"]*).*?alt="([^"]+)'
+            title_pattern = 'href="(?P<url>[^"]*season-\d+/episode-\d+[^"]*).*?alt="(?P<title>[^"]+)'
             return self._default_get_episode_url(season_url, video, episode_pattern, title_pattern)
 
     def search(self, video_type, title, year, season=''):
