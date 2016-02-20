@@ -87,7 +87,7 @@ class Trakt_API():
     def show_watchlist(self, section):
         url = '/users/me/watchlist/%s' % (TRAKT_SECTIONS[section])
         params = {'extended': 'full,images'}
-        cache_limit = self.__get_cache_limit(TRAKT_SECTIONS[section], 'watchlisted_at', cached=True)
+        cache_limit = self.__get_cache_limit('lists', 'updated_at', cached=True)
         response = self.__call_trakt(url, params=params, cache_limit=cache_limit)
         return [item[TRAKT_SECTIONS[section][:-1]] for item in response]
 
