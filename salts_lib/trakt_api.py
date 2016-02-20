@@ -264,9 +264,13 @@ class Trakt_API():
             result.append(element)
         return result
 
-    def get_watched(self, section, full=False, cached=True):
+    def get_watched(self, section, full=False, noseasons=False, cached=True):
         url = '/sync/watched/%s' % (TRAKT_SECTIONS[section])
-        params = {'extended': 'full,images'} if full else None
+        params = {'extended': 'full,images'} if full else {}
+        if noseasons and params:
+            params['extended'] += ',noseasons'
+        else:
+            params['extended'] = 'noseasons'
         media = 'movies' if section == SECTIONS.MOVIES else 'episodes'
         cache_limit = self.__get_cache_limit(media, 'watched_at', cached)
         return self.__call_trakt(url, params=params, cache_limit=cache_limit, cached=cached)

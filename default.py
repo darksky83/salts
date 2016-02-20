@@ -727,11 +727,11 @@ def get_progress(cached=True):
     with gui_utils.ProgressDialog(i18n('discover_mne'), background=True) as pd:
         timeout = max_timeout = int(kodi.get_setting('trakt_timeout'))
         pd.update(0, line1=i18n('retr_history'))
-        progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, cached=cached)
+        progress_list = trakt_api.get_watched(SECTIONS.TV, full=True, noseasons=True, cached=cached)
         if kodi.get_setting('include_watchlist_next') == 'true':
             pd.update(5, line1=i18n('retr_watchlist'))
             watchlist = trakt_api.show_watchlist(SECTIONS.TV)
-            watchlist = [{'show': item, 'last_watched_at': None} for item in watchlist]
+            watchlist = [{'show': item} for item in watchlist]
             progress_list += watchlist
     
         pd.update(10, line1=i18n('retr_hidden'))
@@ -763,14 +763,12 @@ def get_progress(cached=True):
             workers.append(worker)
             # create a shows dictionary to be used during progress building
             shows[trakt_id] = show['show']
-            shows[trakt_id]['last_watched_at'] = show['last_watched_at']
     
         episodes = []
         while worker_count > 0:
             try:
                 log_utils.log('Calling get with timeout: %s' % (timeout), xbmc.LOGDEBUG)
                 progress = q.get(True, timeout)
-                # log_utils.log('Got Progress: %s' % (progress), xbmc.LOGDEBUG)
                 worker_count -= 1
     
                 show = shows[str(progress['trakt'])]
@@ -778,7 +776,7 @@ def get_progress(cached=True):
                 pd.update(percent, line1=i18n('rec_progress') % (show['title']))
                 if 'next_episode' in progress and progress['next_episode']:
                     episode = {'show': show, 'episode': progress['next_episode']}
-                    episode['last_watched_at'] = show['last_watched_at']
+                    episode['last_watched_at'] = progress['last_watched_at']
                     episode['percent_completed'] = (progress['completed'] * 100) / progress['aired'] if progress['aired'] > 0 else 0
                     episode['completed'] = progress['completed']
                     episodes.append(episode)
