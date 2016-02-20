@@ -2376,10 +2376,7 @@ def main(argv=None):
         db_connection = DB_Connection()
         mode = queries.get('mode', None)
         url_dispatcher.dispatch(mode, queries)
-    except (TransientTraktError, TraktError) as e:
-        log_utils.log(str(e), xbmc.LOGERROR)
-        kodi.notify(msg=str(e), duration=5000)
-    except TraktAuthError as e:
+    except (TransientTraktError, TraktError, TraktAuthError) as e:
         log_utils.log(str(e), xbmc.LOGERROR)
         kodi.notify(msg=str(e), duration=5000)
     except DatabaseRecoveryError as e:
