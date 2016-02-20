@@ -171,7 +171,7 @@
          <setting id="afdah.org-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="afdah.org_last_results" type="number" default="0" visible="false"/>
          <setting id="alluc.com-enable" type="bool" label="alluc.com Enabled" default="true" visible="true"/>
-         <setting id="alluc.com-base_url" type="text" label="    Base Url" default="http://www.alluc.com" visible="eq(-1,true)"/>
+         <setting id="alluc.com-base_url" type="text" label="    Base Url" default="http://www.alluc.ee" visible="eq(-1,true)"/>
          <setting id="alluc.com-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="alluc.com_last_results" type="number" default="0" visible="false"/>
          <setting id="alluc.com-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
