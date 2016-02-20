@@ -2379,6 +2379,9 @@ def main(argv=None):
     except (TransientTraktError, TraktError) as e:
         log_utils.log(str(e), xbmc.LOGERROR)
         kodi.notify(msg=str(e), duration=5000)
+    except TraktAuthError as e:
+        log_utils.log(str(e), xbmc.LOGERROR)
+        kodi.notify(msg=str(e), duration=5000)
     except DatabaseRecoveryError as e:
         log_utils.log('Attempting DB recovery due to Database Error: %s' % (e), log_utils.LOGWARNING)
         db_connection.attempt_db_recovery()

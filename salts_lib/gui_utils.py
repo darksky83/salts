@@ -25,6 +25,8 @@ from utils2 import reset_base_url, i18n
 from trakt_api import Trakt_API
 from salts_lib import log_utils
 
+INTERVALS = 5
+
 def auth_trakt():
     start = time.time()
     use_https = kodi.get_setting('use_https') == 'true'
@@ -32,7 +34,6 @@ def auth_trakt():
     trakt_api = Trakt_API(use_https=use_https, timeout=trakt_timeout)
     result = trakt_api.get_code()
     code, expires, interval = result['device_code'], result['expires_in'], result['interval']
-    interval = interval * 1000
     time_left = expires - int(time.time() - start)
     line1 = i18n('verification_url') % (result['verification_url'])
     line2 = i18n('prompt_code') % (result['user_code'])
@@ -40,25 +41,25 @@ def auth_trakt():
     with ProgressDialog(i18n('trakt_acct_auth'), line1=line1, line2=line2, line3=line3) as pd:
         pd.update(100)
         while time_left:
-            if pd.is_canceled(): return
-            kodi.sleep(interval)
-            if pd.is_canceled(): return
+            for _ in range(INTERVALS):
+                kodi.sleep(interval * 1000 / INTERVALS)
+                if pd.is_canceled(): return
 
             try:
                 result = trakt_api.get_device_token(code)
                 break
             except urllib2.URLError as e:
                 # authorization is pending; too fast
-                log_utils.log(e.code)
                 if e.code in [400, 429]:
                     pass
                 elif e.code == 418:
                     kodi.notify(msg=i18n('user_reject_auth'), duration=3000)
                     return
+                elif e.code == 410:
+                    break
                 else:
                     raise
                 
-            if pd.is_canceled(): return
             time_left = expires - int(time.time() - start)
             progress = time_left * 100 / expires
             pd.update(progress, line3=i18n('code_expires') % (time_left))

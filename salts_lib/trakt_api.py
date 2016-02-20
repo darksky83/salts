@@ -66,10 +66,9 @@ class Trakt_API():
         data = {'client_id': V2_API_KEY, 'client_secret': CLIENT_SECRET, 'code': code}
         return self.__call_trakt(url, data=data, auth=False, cached=False)
     
-    def refresh_token(self):
+    def refresh_token(self, refresh_token):
         url = '/oauth/token'
         data = {'client_id': V2_API_KEY, 'client_secret': CLIENT_SECRET, 'redirect_uri': REDIRECT_URI}
-        refresh_token = kodi.get_setting('trakt_refresh_token')
         if refresh_token:
             data['refresh_token'] = refresh_token
             data['grant_type'] = 'refresh_token'
@@ -484,7 +483,7 @@ class Trakt_API():
                                 raise TraktAuthError('Trakt Call Authentication Failed (%s)' % (e.code))
                             # first try token fail, try to refresh token
                             else:
-                                result = self.refresh_token()
+                                result = self.refresh_token(kodi.get_setting('trakt_refresh_token'))
                                 self.token = result['access_token']
                                 kodi.set_setting('trakt_oauth_token', result['access_token'])
                                 kodi.set_setting('trakt_refresh_token', result['refresh_token'])
