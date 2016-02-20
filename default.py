@@ -62,13 +62,7 @@ def main_menu():
     kodi.create_item({'mode': MODES.BROWSE, 'section': SECTIONS.MOVIES}, i18n('movies'), thumb=utils2.art('movies.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.BROWSE, 'section': SECTIONS.TV}, i18n('tv_shows'), thumb=utils2.art('television.png'), fanart=utils2.art('fanart.jpg'))
     if utils2.menu_on('settings'): kodi.create_item({'mode': MODES.SETTINGS}, i18n('settings'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
-
-    if not TOKEN:
-        last_reminder = int(kodi.get_setting('last_reminder'))
-        now = int(time.time())
-        if last_reminder >= 0 and last_reminder < now - (24 * 60 * 60):
-            gui_utils.get_pin()
-    else:
+    if TOKEN:
         profile = trakt_api.get_user_profile()
         kodi.set_setting('trakt_user', '%s (%s)' % (profile['username'], profile['name']))
             
@@ -81,7 +75,7 @@ def settings_menu():
     kodi.create_item({'mode': MODES.ADDON_SETTINGS}, i18n('addon_settings'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.AUTO_CONF}, i18n('auto_config'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.RESET_BASE_URL}, i18n('reset_base_url'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
-    kodi.create_item({'mode': MODES.GET_PIN}, i18n('auth_salts'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
+    kodi.create_item({'mode': MODES.AUTH_TRAKT}, i18n('auth_salts'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.SHOW_VIEWS}, i18n('set_default_views'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.create_item({'mode': MODES.BROWSE_URLS}, i18n('remove_cached_urls'), thumb=utils2.art('settings.png'), fanart=utils2.art('fanart.jpg'))
     kodi.end_of_directory()
@@ -205,9 +199,9 @@ def resolver_settings():
 def addon_settings():
     kodi.show_settings()
 
-@url_dispatcher.register(MODES.GET_PIN)
-def get_pin():
-    gui_utils.get_pin()
+@url_dispatcher.register(MODES.AUTH_TRAKT)
+def auth_trakt():
+    gui_utils.auth_trakt()
 
 @url_dispatcher.register(MODES.INSTALL_THEMES)
 def install_themepak():
