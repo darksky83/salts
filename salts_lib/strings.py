@@ -275,5 +275,6 @@ STRINGS = {
     'verification_url': 30266,
     'prompt_code': 30267,
     'code_expires': 30268,
-    'user_reject_auth': 30269
+    'user_reject_auth': 30269,
+    'use_https': 30548
 }

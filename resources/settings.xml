@@ -434,11 +434,13 @@
          <setting id="pftv-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="pftv_last_results" type="number" default="0" visible="false"/>
          <setting id="Premiumize.me-enable" type="bool" label="Premiumize.me Enabled" default="true" visible="true"/>
-         <setting id="Premiumize.me-base_url" type="text" label="    Base Url" default="https://www.premiumize.me" visible="eq(-1,true)"/>
+         <setting id="Premiumize.me-base_url" type="text" label="    Base Url" default="premiumize.me" visible="eq(-1,true)"/>
          <setting id="Premiumize.me-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
          <setting id="Premiumize.me_last_results" type="number" default="0" visible="false"/>
-         <setting id="Premiumize.me-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
-         <setting id="Premiumize.me-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
+         <setting id="Premiumize.me-use_https" type="bool" label="     Use HTTPS" default="false" visible="eq(-4,true)"/>
+         <setting id="Premiumize.me-username" type="text" label="     Username" default="" visible="eq(-5,true)"/>
+         <setting id="Premiumize.me-password" type="text" label="     Password" option="hidden" default="" visible="eq(-6,true)"/>
+         <setting id="Premiumize.me-base_url2" type="text" label="     Movies Base Url" default="https://yts.ag" visible="eq(-7,true)"/>
     </category>
     
     <category label="Scrapers 4">
