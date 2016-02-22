@@ -67,6 +67,7 @@ def auth_trakt():
     try:
         kodi.set_setting('trakt_oauth_token', result['access_token'])
         kodi.set_setting('trakt_refresh_token', result['refresh_token'])
+        trakt_api = Trakt_API(result['access_token'], use_https=use_https, timeout=trakt_timeout)
         profile = trakt_api.get_user_profile(cached=False)
         kodi.set_setting('trakt_user', '%s (%s)' % (profile['username'], profile['name']))
         kodi.notify(msg=i18n('trakt_auth_complete'), duration=3000)
