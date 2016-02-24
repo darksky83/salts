@@ -154,12 +154,15 @@ class TwoDDL_Scraper(scraper.Scraper):
         filter_days = datetime.timedelta(days=int(kodi.get_setting('%s-filter' % (self.get_name()))))
         if filter_days:
             today = datetime.date.today()
-            match = re.search('<span\s+class="date">(.*?)\s+(\d+)[^<]+(\d{4})<', post)
+            match = re.search('<a[^>]+title="posting time[^"]*">(.*?)\s+(\d+)\s*(\d{2,4})<', post)
             if match:
                 try:
                     mon_name, post_day, post_year = match.groups()
+                    post_year = int(post_year)
+                    if post_year < 2000:
+                        post_year += 2000
                     post_month = SHORT_MONS.index(mon_name) + 1
-                    post_date = datetime.date(int(post_year), post_month, int(post_day))
+                    post_date = datetime.date(post_year, post_month, int(post_day))
                     if today - post_date > filter_days:
                         return True
                 except ValueError:
