@@ -65,11 +65,12 @@ class WatchHD_Scraper(scraper.Scraper):
             if iframe_url:
                 headers = {'Referer': link}
                 html = self._http_get(iframe_url[0], headers=headers, cache_limit=0)
-                match = re.search("window\.atob\('([^']+)", html)
+                match = re.search("window\.atob[\([]+'([^']+)", html)
                 if match:
                     func_count = len(re.findall('window\.atob', html))
                     html = match.group(1)
                     for _i in xrange(func_count):
+                        html = html.replace('STOP_MAKE_KODI', '')
                         html = base64.decodestring(html)
                 
                 streams = []
