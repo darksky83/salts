@@ -454,6 +454,9 @@
          <setting id="Premiumize.me-password" type="text" label="     Password" option="hidden" default="" visible="eq(-6,true)"/>
          <setting id="Premiumize.me-base_url2" type="text" label="     Movies Base Url" default="https://yts.ag" visible="eq(-7,true)"/>
          <setting id="Premiumize.me-base_url3" type="text" label="     TV Shows Base Url" default="https://eztv.ag" visible="eq(-8,true)"/>
+         <setting id="Premiumize.V2-enable" type="bool" label="Premiumize.V2 Enabled" default="true" visible="true"/>
+         <setting id="Premiumize.V2-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-1,true)"/>
+         <setting id="Premiumize.V2_last_results" type="number" default="0" visible="false"/>
          <setting id="PrimeWire-enable" type="bool" label="PrimeWire Enabled" default="true" visible="true"/>
          <setting id="PrimeWire-base_url" type="text" label="    Base Url" default="http://www.primewire.ag" visible="eq(-1,true)"/>
          <setting id="PrimeWire-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -530,13 +533,13 @@
          <setting id="TVWTVS-base_url" type="text" label="    Base Url" default="http://tvserieswatch.net" visible="eq(-1,true)"/>
          <setting id="TVWTVS-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="TVWTVS_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 5">
          <setting id="UFlix.org-enable" type="bool" label="UFlix.org Enabled" default="true" visible="true"/>
          <setting id="UFlix.org-base_url" type="text" label="    Base Url" default="http://uflix.org" visible="eq(-1,true)"/>
          <setting id="UFlix.org-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="UFlix.org_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 5">
          <setting id="vidics.ch-enable" type="bool" label="vidics.ch Enabled" default="true" visible="true"/>
          <setting id="vidics.ch-base_url" type="text" label="    Base Url" default="http://www.vidics.ch" visible="eq(-1,true)"/>
          <setting id="vidics.ch-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
