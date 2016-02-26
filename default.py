@@ -744,7 +744,6 @@ def get_progress(cached=True):
             
             worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, cached, .08])
             percent = (i + 1) * 25 / total + 10
-            log_utils.log('%s - %s' % (type(i18n('req_progress')), type(show['show']['title'])))
             pd.update(percent, line1=i18n('req_progress') % (show['show']['title']))
             worker_count += 1
             workers.append(worker)
