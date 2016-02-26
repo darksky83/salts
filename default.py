@@ -744,6 +744,7 @@ def get_progress(cached=True):
             
             worker = utils2.start_worker(q, utils.parallel_get_progress, [trakt_id, cached, .08])
             percent = (i + 1) * 25 / total + 10
+            log_utils.log('%s - %s' % (type(i18n('req_progress')), type(show['show']['title'])))
             pd.update(percent, line1=i18n('req_progress') % (show['show']['title']))
             worker_count += 1
             workers.append(worker)
@@ -1716,7 +1717,6 @@ def update_strms(section, dialog=None):
     for i, item in enumerate(items):
         percent_progress = (i + 1) * 100 / length
         title = re.sub('\s+\(\d{4}\)$', '', item['title'])
-        if isinstance(title, unicode): title = title.encode('utf-8')
             
         dialog.update(percent_progress, '%s %s: %s (%s)' % (i18n('updating'), section, title, item['year']))
         try:
