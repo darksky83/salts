@@ -50,7 +50,7 @@ class PremiumizeV2_Scraper(scraper.Scraper):
 
     @classmethod
     def provides(cls):
-        return frozenset([VIDEO_TYPES.MOVIE, VIDEO_TYPES.EPISODE])
+        return frozenset([VIDEO_TYPES.MOVIE, VIDEO_TYPES.EPISODE, VIDEO_TYPES.SEASON])
 
     @classmethod
     def get_name(cls):
@@ -71,27 +71,35 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         hosters = []
         source_url = self.get_url(video)
         if source_url and source_url != FORCE_NO_MATCH:
-            query = urlparse.parse_qs(source_url)
-            if 'hash' in query:
-                url = urlparse.urljoin(self.base_url, BROWSE_URL % (query['hash'][0]))
-                js_data = self._http_get(url, cache_limit=1)
-                if 'content' in js_data:
-                    videos = self.__get_videos(js_data['content'], video)
-                    for video in videos:
-                        host = self._get_direct_hostname(video['url'])
-                        hoster = {'multi-part': False, 'class': self, 'views': None, 'url': video['url'], 'rating': None, 'host': host, 'quality': video['quality'], 'direct': True}
-                        if 'size' in video: hoster['size'] = scraper_utils.format_size(video['size'])
-                        if 'name' in video: hoster['extra'] = video['name']
-                        hosters.append(hoster)
+            norm_title = scraper_utils.normalize_title(video.title)
+            for stream in self.__get_videos(source_url, video):
+                if video.video_type == VIDEO_TYPES.EPISODE and not self.__match_episode(video, norm_title, stream['name'], 'dummy'):
+                    continue
+
+                host = self._get_direct_hostname(stream['url'])
+                hoster = {'multi-part': False, 'class': self, 'views': None, 'url': stream['url'], 'rating': None, 'host': host, 'quality': stream['quality'], 'direct': True}
+                if 'size' in stream: hoster['size'] = scraper_utils.format_size(stream['size'])
+                if 'name' in stream: hoster['extra'] = stream['name']
+                hosters.append(hoster)
                          
         return hosters
     
-    def __get_videos(self, content, video):
+    def __get_videos(self, source_url, video):
+        videos = []
+        query = urlparse.parse_qs(source_url)
+        if 'hash' in query:
+            url = urlparse.urljoin(self.base_url, BROWSE_URL % (query['hash'][0]))
+            js_data = self._http_get(url, cache_limit=1)
+            if 'content' in js_data:
+                videos = self.__get_videos2(js_data['content'], video)
+        return videos
+        
+    def __get_videos2(self, content, video):
         videos = []
         for key in content:
             item = content[key]
             if item['type'].lower() == 'dir':
-                videos += self.__get_videos(item['children'], video)
+                videos += self.__get_videos2(item['children'], video)
             else:
                 if item['ext'].upper() in VIDEO_EXT and ('size' not in item or int(item['size']) > (MIN_MEG * 1024 * 1024)):
                     temp_video = {'name': item['name'], 'url': item['url'], 'size': item['size']}
@@ -119,47 +127,47 @@ class PremiumizeV2_Scraper(scraper.Scraper):
             return scraper_utils.height_get_quality(height)
         
     def get_url(self, video):
-        url = None
-        self.create_db_connection()
-        result = self.db_connection.get_related_url(video.video_type, video.title, video.year, self.get_name(), video.season, video.episode)
-        if result:
-            url = result[0][0]
-            log_utils.log('Got local related url: |%s|%s|%s|%s|%s|' % (video.video_type, video.title, video.year, self.get_name(), url))
-        else:
-            if video.video_type == VIDEO_TYPES.MOVIE:
-                results = self.search(video.video_type, video.title, video.year)
-                if results:
-                    url = results[0]['url']
-                    self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url)
-            else:
-                url = self._get_episode_url(video)
-                if url:
-                    self.db_connection.set_related_url(video.video_type, video.title, video.year, self.get_name(), url, video.season, video.episode)
-
+        url = self._default_get_url(video)
+        if url is None and video.video_type == VIDEO_TYPES.EPISODE:
+            return self.__find_episodes(video)
         return url
 
-    def _get_episode_url(self, video):
+    def _get_episode_url(self, season_url, video):
+        query = urlparse.parse_qs(season_url)
+        if 'hash' in query:
+            hash_id = query['hash'][0]
+            norm_title = scraper_utils.normalize_title(video.title)
+            for stream in self.__get_videos(season_url, video):
+                if self.__match_episode(video, norm_title, stream['name'], hash_id):
+                    return season_url
+        
+    def __find_episodes(self, video):
         url = urlparse.urljoin(self.base_url, LIST_URL)
         js_data = self._http_get(url, cache_limit=0)
-        norm_title = scraper_utils.normalize_title(video.title)
         if 'transfers' in js_data:
-            airdate_fallback = kodi.get_setting('airdate-fallback') == 'true' and video.ep_airdate
-            show_title = ''
             if not scraper_utils.force_title(video):
+                norm_title = scraper_utils.normalize_title(video.title)
                 for item in js_data['transfers']:
-                    sxe_pattern = '(.*?)[. _]S%02dE%02d[. _]' % (int(video.season), int(video.episode))
-                    match = re.search(sxe_pattern, item['name'], re.I)
-                    if match:
-                        show_title = match.group(1)
-                    elif video.ep_airdate and airdate_fallback:
-                        airdate_pattern = '(.*?)[. _]%s[. _]%02d[. _]%02d[. _]' % (video.ep_airdate.year, video.ep_airdate.month, video.ep_airdate.day)
-                        match = re.search(airdate_pattern, item['name'])
-                        if match:
-                            show_title = match.group(1)
-                    
-                    if show_title and norm_title in scraper_utils.normalize_title(show_title):
-                        return 'hash=%s' % (item['hash'])
+                    match_url = self.__match_episode(video, norm_title, item['name'], item['hash'])
+                    if match_url is not None:
+                        return match_url
                 
+    def __match_episode(self, video, norm_title, title, hash_id):
+        sxe_pattern = '(.*?)[. _]S%02dE%02d[. _]' % (int(video.season), int(video.episode))
+        airdate_fallback = kodi.get_setting('airdate-fallback') == 'true' and video.ep_airdate
+        show_title = ''
+        match = re.search(sxe_pattern, title, re.I)
+        if match:
+            show_title = match.group(1)
+        elif video.ep_airdate and airdate_fallback:
+            airdate_pattern = '(.*?)[. _]%s[. _]%02d[. _]%02d[. _]' % (video.ep_airdate.year, video.ep_airdate.month, video.ep_airdate.day)
+            match = re.search(airdate_pattern, title)
+            if match:
+                show_title = match.group(1)
+        
+        if show_title and norm_title in scraper_utils.normalize_title(show_title):
+            return 'hash=%s' % (hash_id)
+    
     def search(self, video_type, title, year, season=''):
         url = urlparse.urljoin(self.base_url, LIST_URL)
         js_data = self._http_get(url, cache_limit=0)
@@ -167,19 +175,29 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         results = []
         if 'transfers' in js_data:
             for item in js_data['transfers']:
-                if re.search('[._ ]S\d+E\d+[._ ]', item['name']): continue  # skip episodes for movies
-                match = re.search('(.*?)\(?(\d{4})\)?(.*)', item['name'])
-                if match:
-                    match_title, match_year, extra = match.groups()
-                else:
-                    match_title, match_year, extra = item['name'], '', ''
-                match_title = match_title.strip()
-                extra = extra.strip()
-                if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
-                    result_title = match_title
-                    if extra: result_title += ' [%s]' % (extra)
-                    result = {'title': result_title, 'year': match_year, 'url': 'hash=%s' % (item['hash'])}
-                    results.append(result)
+                is_season = re.search('(.*?[._ ]season[._ ]+(\d+))[._ ](.*)', item['name'], re.I)
+                if not is_season and video_type == VIDEO_TYPES.MOVIE or is_season and VIDEO_TYPES.SEASON:
+                    if re.search('[._ ]S\d+E\d+[._ ]', item['name']): continue  # skip episodes
+                    if video_type == VIDEO_TYPES.SEASON:
+                        match_title, match_season, extra = is_season.groups()
+                        if season and int(match_season) != int(season):
+                            continue
+                        match_year = ''
+                        match_title = re.sub('[._]', ' ', match_title)
+                    else:
+                        match = re.search('(.*?)\(?(\d{4})\)?(.*)', item['name'])
+                        if match:
+                            match_title, match_year, extra = match.groups()
+                        else:
+                            match_title, match_year, extra = item['name'], '', ''
+                        
+                    match_title = match_title.strip()
+                    extra = extra.strip()
+                    if norm_title in scraper_utils.normalize_title(match_title) and (not year or not match_year or year == match_year):
+                        result_title = match_title
+                        if extra: result_title += ' [%s]' % (extra)
+                        result = {'title': result_title, 'year': match_year, 'url': 'hash=%s' % (item['hash'])}
+                        results.append(result)
         
         return results
 
