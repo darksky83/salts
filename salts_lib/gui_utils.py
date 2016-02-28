@@ -139,7 +139,7 @@ def perform_auto_conf(responses):
     if responses[10]:
         tiers = ['Local', 'Premiumize.V2', 'Premiumize.me', 'Furk.net', 'EasyNews', 'DD.tv', 'NoobRoom',
                  ['WatchHD', 'IFlix', 'MoviesPlanet', 'TVWTVS', '9Movies', '123Movies', 'niter.tv', 'HDMovie14', 'ororo.tv'],
-                 ['StreamLord', 'CyberReel', 'MWM', 'tunemovie', 'MovieMax', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
+                 ['StreamLord', 'CyberReel', 'MovCav', 'tunemovie', 'MovieMax', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
                  ['Rainierland', 'DayT.se', 'FardaDownload', 'zumvo.com', 'PutMV', 'vivo.to', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
                  ['IzlemeyeDeger', 'SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows', 'OnlineDizi'],
                  ['DDLValley', '2DDL', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TheExtopia', 'RLSSource.net', 'TVRelease.Net'],
@@ -148,7 +148,8 @@ def perform_auto_conf(responses):
                  ['MTVS', 'MovieSub', 'MovieHut', 'CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'iWatchOnline'],
                  ['vidics.ch', 'pubfilm', 'OnlineMoviesIs', 'OnlineMoviesPro', 'ViewMovies', 'movie25', 'viooz.ac', 'view47', 'MoviesHD'],
                  ['wmo.ch', 'stream-tv.co', 'clickplay.to', 'MintMovies', 'MovieNight', 'cmz', 'ch131', 'filmikz.ch'],
-                 ['MovieTube', 'LosMovies', 'FilmStreaming.in', 'moviestorm.eu', 'MerDB', 'ayyex']]
+                 ['MovieTube', 'LosMovies', 'FilmStreaming.in', 'moviestorm.eu', 'MerDB'],
+                 'MWM', 'ayyex']
     
         sso = []
         random_sso = kodi.get_setting('random_sso') == 'true'
