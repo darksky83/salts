@@ -228,7 +228,9 @@ def add_section_lists(section):
     for list_str in main_list:
         if '@' not in list_str:
             if TOKEN:
-                add_list_item(section, lists_dict[list_str])
+                fake_list = {'name': list_str, 'ids': {'slug': list_str}}
+                user_list = lists_dict.get(list_str, fake_list)
+                add_list_item(section, user_list)
         else:
             other_list = other_dict.get(list_str, list(reversed(list_str.split('@'))))
             add_other_list_item(MODES.BROWSE, section, other_list)

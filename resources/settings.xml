@@ -367,7 +367,7 @@
          <setting id="moviestorm.eu-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="moviestorm.eu_last_results" type="number" default="0" visible="false"/>
          <setting id="MovieSub-enable" type="bool" label="MovieSub Enabled" default="true" visible="true"/>
-         <setting id="MovieSub-base_url" type="text" label="    Base Url" default="http://www.moviesub.tv" visible="eq(-1,true)"/>
+         <setting id="MovieSub-base_url" type="text" label="    Base Url" default="http://www.moviesub.net" visible="eq(-1,true)"/>
          <setting id="MovieSub-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="MovieSub_last_results" type="number" default="0" visible="false"/>
          <setting id="MovieTube-enable" type="bool" label="MovieTube Enabled" default="true" visible="true"/>
