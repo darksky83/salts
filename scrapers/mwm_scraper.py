@@ -76,8 +76,7 @@ class MWM_Scraper(scraper.Scraper):
         sources = {}
         for iframe_url in dom_parser.parse_dom(html, 'iframe', ret='data-lazy-src'):
             headers = {'Referer': page_url}
-            html = self._http_get(iframe_url, headers=headers, cache_limit=0)
-            log_utils.log(html)
+            html = self._http_get(iframe_url, headers=headers, cache_limit=.5)
             for match in re.finditer('"file"\s*:\s*"([^"]+)"\s*,\s*"label"\s*:\s*"([^"]+)', html, re.DOTALL):
                 stream_url, height = match.groups()
                 stream_url = re.sub('; .*', '', stream_url)
