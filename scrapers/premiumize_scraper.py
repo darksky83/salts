@@ -200,15 +200,14 @@ class Premiumize_Scraper(scraper.Scraper):
         return dom_parser.parse_dom(html, 'div', {'id': 'movie-info'}, ret='data-movie-id')
 
     def __get_hash_data(self, hashes):
-        new_hash_data = {}
+        new_data = {}
         if hashes:
             check_url = CHECKHASH_URL + urllib.urlencode([('hashes[]', hashes)], doseq=True)
             check_url = urlparse.urljoin(self.base_url, check_url)
-            new_hash_data = hash_data = self._json_get(check_url, cache_limit=.1)
+            new_data = hash_data = self._json_get(check_url, cache_limit=.1)
             if 'hashes' in hash_data:
-                for hash_id in hash_data['hashes']:
-                    new_hash_data['hashes'][hash_id.lower()] = hash_data['hashes'][hash_id]
-        return new_hash_data
+                new_data['hashes'] = dict((hash_id.lower(), hash_data['hashes'][hash_id]) for hash_id in hash_data['hashes'])
+        return new_data
     
     def get_url(self, video):
         return self._default_get_url(video)
