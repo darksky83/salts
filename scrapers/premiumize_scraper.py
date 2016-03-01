@@ -108,7 +108,6 @@ class Premiumize_Scraper(scraper.Scraper):
     
     def __get_videos(self, content):
         videos = []
-        log_utils.log(content)
         for key in content:
             item = content[key]
             if item['type'].lower() == 'dir':
