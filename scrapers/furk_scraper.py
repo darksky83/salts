@@ -56,14 +56,15 @@ class Furk_Scraper(scraper.Scraper):
     def resolve_link(self, link):
         playlist = super(self.__class__, self)._http_get(link, cache_limit=.5)
         try:
+            ns = '{http://xspf.org/ns/0/}'
             root = ET.fromstring(playlist)
-            tracks = root.findall('.//{http://xspf.org/ns/0/}track')
+            tracks = root.findall('.//%strack' % (ns))
             for track in tracks:
-                duration = track.find('{http://xspf.org/ns/0/}duration').text
+                duration = track.find('%sduration' % (ns)).text
                 try: duration = int(duration)
                 except: duration = 0
                 if duration >= MIN_DURATION:
-                    location = track.find('{http://xspf.org/ns/0/}location').text
+                    location = track.find('%slocation' % (ns)).text
                     return location
         except Exception as e:
             log_utils.log('Failure during furk playlist parse: %s' % (e), log_utils.LOGWARNING)
