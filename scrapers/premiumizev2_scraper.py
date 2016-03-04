@@ -175,7 +175,7 @@ class PremiumizeV2_Scraper(scraper.Scraper):
         url = urlparse.urljoin(self.base_url, FOLDER_URL)
         js_data = self._http_get(url, cache_limit=.001)
         if 'content' in js_data:
-            hashes = [torrent['hash'] for torrent in torrents]
+            hashes = dict((torrent['hash'], True) for torrent in torrents)
             torrents += [torrent for torrent in js_data['content'] if torrent['hash'] not in hashes]
         return torrents
     
