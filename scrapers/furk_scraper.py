@@ -33,6 +33,7 @@ import xml.etree.ElementTree as ET
 BASE_URL = 'http://www.furk.net'
 SEARCH_URL = '/api/plugins/metasearch'
 LOGIN_URL = '/api/login/login'
+MIN_DURATION = 10 * 60 * 1000  # 10 minutes in milliseconds
 
 class Furk_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -54,10 +55,18 @@ class Furk_Scraper(scraper.Scraper):
 
     def resolve_link(self, link):
         playlist = super(self.__class__, self)._http_get(link, cache_limit=.5)
-        root = ET.fromstring(playlist)
-        location = root.find('.//{http://xspf.org/ns/0/}location')
-        if location is not None:
-            return location.text
+        try:
+            root = ET.fromstring(playlist)
+            tracks = root.findall('.//{http://xspf.org/ns/0/}track')
+            for track in tracks:
+                duration = track.find('{http://xspf.org/ns/0/}duration').text
+                try: duration = int(duration)
+                except: duration = 0
+                if duration >= MIN_DURATION:
+                    location = track.find('{http://xspf.org/ns/0/}location').text
+                    return location
+        except Exception as e:
+            log_utils.log('Failure during furk playlist parse: %s' % (e), log_utils.LOGWARNING)
 
     def format_source_label(self, item):
         label = '[%s] %s' % (item['quality'], item['host'])
