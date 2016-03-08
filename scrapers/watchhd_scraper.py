@@ -126,7 +126,8 @@ class WatchHD_Scraper(scraper.Scraper):
         hosters = []
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=8)
+            url = url.replace('/film/', '/filminfo/')
+            html = self._http_get(url, cache_limit=.5)
             match = re.search('<b>Views:.*?([\d,]+)', html)
             if match:
                 views = int(match.group(1).replace(',', ''))
@@ -170,6 +171,7 @@ class WatchHD_Scraper(scraper.Scraper):
 
     def _get_episode_url(self, season_url, video):
         url = urlparse.urljoin(self.base_url, season_url)
+        url = url.replace('/film/', '/filminfo/')
         html = self._http_get(url, cache_limit=2)
         html = self.__get_watch_now(html)
         match = re.search('<a[^>]+id="ep_\d+"[^>]*>\s*%s\s*<' % (video.episode), html)
