@@ -1067,6 +1067,7 @@ def get_sources(mode, video_type, title, year, trakt_id, season='', episode='', 
 
                 if max_results > 0 and len(hosters) >= max_results:
                     log_utils.log('Exceeded max results: %s/%s' % (max_results, len(hosters)))
+                    fails = {}
                     break
 
             else:
