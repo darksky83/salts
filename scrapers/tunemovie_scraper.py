@@ -29,7 +29,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://tunemovie.tv'
+BASE_URL = 'http://tunemovie.is'
 LINK_URL = '/ip.temp/swf/plugins/ipplugins.php'
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
 GK_KEY = base64.b64decode('Q05WTmhPSjlXM1BmeFd0UEtiOGg=')
