@@ -692,7 +692,7 @@ def show_collection(section):
     if sort_key == 1:
         items.reverse()
     elif sort_key == 2:
-        items.sort(key=lambda x: re.sub('^(The |A |An )', '', x['title'], re.I))
+        items.sort(key=lambda x: utils2.title_key(x['title']))
     elif sort_key == 3:
         items.sort(key=lambda x: x['year'])
 
