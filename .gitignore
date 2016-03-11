@@ -6,4 +6,5 @@ scrapers/iflix_scraper.py
 scrapers/ocw_scraper.py
 scrapers/cyberreel_scraper.py
 scrapers/theextopia_scraper.py
+scrapers/mwm_scraper.py
 scrapers/tva_private_scrapers.dat
