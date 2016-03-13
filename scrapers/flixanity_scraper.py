@@ -157,7 +157,7 @@ class Flixanity_Scraper(scraper.Scraper):
     def __get_token(self, html=''):
         if self.__token is None:
             if not html:
-                html = self._cached_http_get(self.base_url, self.base_url, self.timeout, cache_limit=0)
+                html = self._cached_http_get(self.base_url, self.base_url, self.timeout, cache_limit=8)
                 
             match = re.search("var\s+tok\s*=\s*'([^']+)", html)
             if match:
@@ -204,5 +204,3 @@ class Flixanity_Scraper(scraper.Scraper):
                     search_url = search_url.replace('\\', '')
                     break
         return search_url
-        
-    
