@@ -276,6 +276,7 @@ def pathify_url(url):
     if not url.startswith('/'): url = '/' + url
     url = url.replace('/./', '/')
     url = url.replace('&amp;', '&')
+    url = url.replace('//', '/')
     return url
 
 def parse_json(html, url=''):
