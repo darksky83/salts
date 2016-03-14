@@ -28,7 +28,7 @@ from salts_lib.constants import VIDEO_TYPES
 import scraper
 
 
-BASE_URL = 'http://emovies.pro/'
+BASE_URL = 'http://emovies.pro'
 
 class EMoviesPro_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -115,7 +115,8 @@ class EMoviesPro_Scraper(scraper.Scraper):
                         match_title = match_title_year
                         match_year = ''
                     
-                    result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
-                    results.append(result)
+                    if not year or not match_year or year == match_year:
+                        result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
+                        results.append(result)
 
         return results
