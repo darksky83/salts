@@ -255,7 +255,7 @@
          <setting id="EasyNews-username" type="text" label="     Username" default="" visible="eq(-4,true)"/>
          <setting id="EasyNews-password" type="text" label="     Password" option="hidden" default="" visible="eq(-5,true)"/>
          <setting id="FardaDownload-enable" type="bool" label="FardaDownload Enabled" default="true" visible="true"/>
-         <setting id="FardaDownload-base_url" type="text" label="    Base Url" default="http://dl.fardadownload.ir/" visible="eq(-1,true)"/>
+         <setting id="FardaDownload-base_url" type="text" label="    Base Url" default="http://fardadownload.ir" visible="eq(-1,true)"/>
          <setting id="FardaDownload-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="FardaDownload_last_results" type="number" default="0" visible="false"/>
          <setting id="filmikz.ch-enable" type="bool" label="filmikz.ch Enabled" default="true" visible="true"/>
