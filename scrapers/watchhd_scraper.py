@@ -90,7 +90,6 @@ class WatchHD_Scraper(scraper.Scraper):
                     for _i in xrange(func_count):
                         html = base64.decodestring(html)
                 
-                log_utils.log(html)
                 streams = []
                 for match in re.finditer('''<source[^>]+src=["']([^'"]+)[^>]+label=['"]([^'"]+)''', html):
                     streams.append(match.groups())
@@ -198,8 +197,9 @@ class WatchHD_Scraper(scraper.Scraper):
                     match_title = match_title_year
                     match_year = ''
                 
-                result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
-                results.append(result)
+                if not year or not match_year or year == match_year:
+                    result = {'title': scraper_utils.cleanse_title(match_title), 'year': match_year, 'url': scraper_utils.pathify_url(match_url)}
+                    results.append(result)
         return results
     
     def __alt_search(self, video_type, title, year, season=''):
