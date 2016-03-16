@@ -16,10 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import re
-import time
 import urllib
 import urlparse
-
+import random
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -34,6 +33,7 @@ BASE_URL = 'http://fmovies.to'
 HASH_URL = '/ajax/film/episode'
 Q_MAP = {'TS': QUALITIES.LOW, 'CAM': QUALITIES.LOW, 'HDTS': QUALITIES.LOW, 'HD 720P': QUALITIES.HD720}
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
+MAX_SOURCES = 5
 
 class NineMovies_Scraper(scraper.Scraper):
     base_url = BASE_URL
@@ -60,10 +60,9 @@ class NineMovies_Scraper(scraper.Scraper):
     def get_sources(self, video):
         source_url = self.get_url(video)
         hosters = []
-        sources = {}
         if source_url and source_url != FORCE_NO_MATCH:
             url = urlparse.urljoin(self.base_url, source_url)
-            html = self._http_get(url, cache_limit=0)
+            html = self._http_get(url, cache_limit=.5)
             for server_list in dom_parser.parse_dom(html, 'ul', {'class': 'episodes'}):
                 labels = dom_parser.parse_dom(server_list, 'a')
                 hash_ids = dom_parser.parse_dom(server_list, 'a', ret='data-id')
@@ -77,13 +76,33 @@ class NineMovies_Scraper(scraper.Scraper):
                     hash_url = hash_url + '?' + urllib.urlencode(query)
                     headers = XHR
                     headers['Referer'] = url
-                    html = self._http_get(hash_url, headers=headers, cache_limit=0)
+                    html = self._http_get(hash_url, headers=headers, cache_limit=.5)
                     js_data = scraper_utils.parse_json(html, hash_url)
-                    
+                    if 'target' in js_data:
+                        stream_url = js_data['target']
+                        if self._get_direct_hostname(stream_url) == 'gvideo':
+                            direct = True
+                            g_sources = self._parse_google(stream_url)
+                            if not g_sources:
+                                g_sources = self._parse_gdocs(stream_url)
+                            else:
+                                random.shuffle(g_sources)
+                                g_sources = g_sources[:MAX_SOURCES]
+                                
+                            sources = {}
+                            for source in g_sources:
+                                sources[source] = scraper_utils.gv_get_quality(source)
+                        else:
+                            direct = False
+                            sources = {stream_url: QUALITIES.HD720}
             
-            for source in sources:
-                hoster = {'multi-part': False, 'host': self._get_direct_hostname(source), 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': source, 'direct': True}
-                hosters.append(hoster)
+                        for source in sources:
+                            if direct:
+                                host = self._get_direct_hostname(source)
+                            else:
+                                host = urlparse.urlparse(source).hostname
+                            hoster = {'multi-part': False, 'host': host, 'class': self, 'quality': sources[source], 'views': None, 'rating': None, 'url': source, 'direct': direct}
+                            hosters.append(hoster)
         return hosters
 
     def __get_token(self, data):

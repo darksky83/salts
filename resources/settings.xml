@@ -163,7 +163,7 @@
          <setting id="2DDL_last_results" type="number" default="0" visible="false"/>
          <setting id="2DDL-filter" type="slider" range="0,180" option="int" label="     Filter results older than (0=No Filter) (days)" default="60" visible="eq(-4,true)"/>
          <setting id="9Movies-enable" type="bool" label="9Movies Enabled" default="true" visible="true"/>
-         <setting id="9Movies-base_url" type="text" label="    Base Url" default="http://9movies.to" visible="eq(-1,true)"/>
+         <setting id="9Movies-base_url" type="text" label="    Base Url" default="http://fmovies.to" visible="eq(-1,true)"/>
          <setting id="9Movies-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="9Movies_last_results" type="number" default="0" visible="false"/>
          <setting id="afdah-enable" type="bool" label="afdah Enabled" default="true" visible="true"/>
