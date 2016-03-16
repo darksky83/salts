@@ -85,7 +85,9 @@ class StreamLord_Scraper(scraper.Scraper):
         results = []
         url = urlparse.urljoin(self.base_url, '/search.html')
         data = {'search': title}
-        html = self._http_get(url, data=data, cache_limit=2)
+        headers = {'Referer': self.base_url}
+        html = self._http_get(url, data=data, headers=headers, cache_limit=2)
+        log_utils.log(html)
         if video_type == VIDEO_TYPES.MOVIE:
             query_type = 'watch-movie-'
         else:
