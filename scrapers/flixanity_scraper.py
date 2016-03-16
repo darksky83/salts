@@ -209,8 +209,7 @@ class Flixanity_Scraper(scraper.Scraper):
         return search_url
     
     def __get_s(self):
-        alpha = string.ascii_uppercase + string.ascii_lowercase
-        return ''.join([random.choice(alpha) for _ in xrange(25)])
+        return ''.join([random.choice(string.ascii_letters) for _ in xrange(25)])
     
     def __get_rt(self, s, shift=13):
         s2 = ''
