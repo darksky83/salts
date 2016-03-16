@@ -113,14 +113,20 @@ class TVWTVS_Scraper(scraper.Scraper):
     def _get_episode_url(self, show_url, video):
         results = self.__search(video.video_type, '', video.year)
         for result in results:
-            if result['url'].startswith(show_url) and re.search('\s+Season\s+%s( |$)' % (video.season), result['title'], re.I):
-                    url = urlparse.urljoin(self.base_url, result['url'])
-                    html = self._http_get(url, cache_limit=2)
-                    for fragment in dom_parser.parse_dom(html, 'li', {'class': '[^"]*box-shadow[^"]*'}):
-                        match = re.search('href="([^"]+)[^>]+>(.*?)</a>', fragment)
-                        if match and re.search('\s+Episode\s+%s( |$)' % (video.episode), match.group(2)):
-                            return scraper_utils.pathify_url(match.group(1))
+            if result['url'].startswith(show_url) and re.search('\s+season\s+%s( |$)' % (video.season), result['title'], re.I):
+                return self.__find_episode(result['url'], video.episode)
                         
+    def __find_episode(self, url, episode):
+        url = urlparse.urljoin(self.base_url, url)
+        html = self._http_get(url, cache_limit=2)
+        fragment = dom_parser.parse_dom(html, 'ul', {'class': '[^"]*listing-videos[^"]*'})
+        if fragment:
+            for match in re.finditer('href="([^"]+)[^>]+>(.*?)</a>', fragment[0]):
+                url, label = match.groups()
+                label = re.sub('</?[^>]*>', '', label)
+                if re.search('\s+Episode\s+%s( |$)' % (episode), label):
+                    return scraper_utils.pathify_url(url)
+                
     def __get_pages(self, url):
         pages = []
         url = urlparse.urljoin(self.base_url, url)
@@ -132,7 +138,7 @@ class TVWTVS_Scraper(scraper.Scraper):
     
     def search(self, video_type, title, year, season=''):
         results = self.__search(video_type, title, year)
-        results = [result for result in results if not re.search('-season-\d+$', result['url']) and not re.search('Season\s+\d+$', result['title'])]
+        results = [result for result in results if not re.search('season[- ]\d+', result['url'], re.I)]
         return results
 
     def __search(self, video_type, title, year):
