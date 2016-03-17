@@ -654,12 +654,15 @@ def download_media(url, path, file_name):
 
             dialog.create('Stream All The Sources', i18n('downloading') % (file_name))
             dialog.update(0)
+        
+        cancel = False
         while True:
             data = response.read(CHUNK_SIZE)
             if not data:
                 break
 
             if progress == PROGRESS.WINDOW and dialog.iscanceled():
+                cancel = True
                 break
 
             total_len += len(data)
@@ -672,13 +675,14 @@ def download_media(url, path, file_name):
                 dialog.update(percent_progress)
             elif progress == PROGRESS.BACKGROUND:
                 dialog.update(percent_progress, 'Stream All The Sources')
-        else:
-            kodi.notify(msg=i18n('download_complete') % (file_name), duration=5000)
-            log_utils.log('Download Complete: %s -> %s' % (url, full_path), log_utils.LOGDEBUG)
 
         file_desc.close()
         if progress:
             dialog.close()
+
+        if not cancel:
+            kodi.notify(msg=i18n('download_complete') % (file_name), duration=5000)
+            log_utils.log('Download Complete: %s -> %s' % (url, full_path), log_utils.LOGDEBUG)
 
     except Exception as e:
         log_utils.log('Error (%s) during download: %s -> %s' % (str(e), url, file_name), log_utils.LOGERROR)
