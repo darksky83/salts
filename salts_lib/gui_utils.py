@@ -38,7 +38,7 @@ def auth_trakt():
     line1 = i18n('verification_url') % (result['verification_url'])
     line2 = i18n('prompt_code') % (result['user_code'])
     line3 = i18n('code_expires') % (time_left)
-    with ProgressDialog(i18n('trakt_acct_auth'), line1=line1, line2=line2, line3=line3) as pd:
+    with kodi.ProgressDialog(i18n('trakt_acct_auth'), line1=line1, line2=line2, line3=line3) as pd:
         pd.update(100)
         while time_left:
             for _ in range(INTERVALS):
@@ -73,44 +73,6 @@ def auth_trakt():
         kodi.notify(msg=i18n('trakt_auth_complete'), duration=3000)
     except Exception as e:
         log_utils.log('Trakt Authorization Failed: %s' % (e), log_utils.LOGDEBUG)
-
-class ProgressDialog(object):
-    def __init__(self, heading, line1='', line2='', line3='', background=False, active=True):
-        if active:
-            if background:
-                self.pd = xbmcgui.DialogProgressBG()
-                msg = line1 + line2 + line3
-                self.pd.create(heading, msg)
-            else:
-                self.pd = xbmcgui.DialogProgress()
-                self.pd.create(heading, line1, line2, line3)
-            self.background = background
-            self.heading = heading
-            self.pd.update(0)
-        else:
-            self.pd = None
-
-    def __enter__(self):
-        return self
-    
-    def __exit__(self, type, value, traceback):
-        if self.pd is not None:
-            self.pd.close()
-            del self.pd
-    
-    def is_canceled(self):
-        if self.pd is not None and not self.background:
-            return self.pd.iscanceled()
-        else:
-            return False
-        
-    def update(self, percent, line1='', line2='', line3=''):
-        if self.pd is not None:
-            if self.background:
-                msg = line1 + line2 + line3
-                self.pd.update(percent, self.heading, msg)
-            else:
-                self.pd.update(percent, line1, line2, line3)
 
 def perform_auto_conf(responses):
     length = len(responses)

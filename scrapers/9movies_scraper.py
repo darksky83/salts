@@ -30,7 +30,7 @@ import scraper
 
 
 BASE_URL = 'http://fmovies.to'
-HASH_URL = '/ajax/film/episode'
+HASH_URL = '/ajax/episode/info'
 Q_MAP = {'TS': QUALITIES.LOW, 'CAM': QUALITIES.LOW, 'HDTS': QUALITIES.LOW, 'HD 720P': QUALITIES.HD720}
 XHR = {'X-Requested-With': 'XMLHttpRequest'}
 MAX_SOURCES = 5
