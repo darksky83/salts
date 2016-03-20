@@ -20,6 +20,9 @@ import re
 import urllib
 import urlparse
 import xbmcvfs
+import xbmcgui
+import xbmc
+import json
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -36,6 +39,8 @@ BASE_URL2 = 'http://streamtorrent.tv'
 SEARCH_URL = '/search?title=%s&order=recent&_pjax=#films-pjax-container'
 TOR_URL = BASE_URL2 + '/api/torrent/%s.json'
 PL_URL = BASE_URL2 + '/api/torrent/%s/%s.m3u8'
+INTERVALS = 5
+KODI_UA = 'Lavf/56.40.101'
 M3U8_PATH = os.path.join(kodi.translate_path(kodi.get_profile()), 'torbase.m3u8')
 M3U8_TEMPLATE = [
     '#EXTM3U',
@@ -64,15 +69,42 @@ class TorbaSe_Scraper(scraper.Scraper):
             xbmcvfs.delete(M3U8_PATH)
             query = urlparse.parse_qs(link)
             query = dict([(key, query[key][0]) if query[key] else (key, '') for key in query])
-            f = xbmcvfs.File(M3U8_PATH, 'w')
-            for line in M3U8_TEMPLATE:
-                line = line.format(**query)
-                f.write(line + '\n')
-            f.close()
-            return M3U8_PATH
-        except:
-            return None
+            if 'video_stream' in query:
+                if self.__authorize_ip(query['video_stream']):
+                    f = xbmcvfs.File(M3U8_PATH, 'w')
+                    for line in M3U8_TEMPLATE:
+                        line = line.format(**query)
+                        f.write(line + '\n')
+                    f.close()
+                    return M3U8_PATH
+        except Exception as e:
+            log_utils.log('Failure during torba resolver: %s' % (e), log_utils.LOGWARNING)
 
+    def __authorize_ip(self, stream_url):
+        headers = {'User-Agent': KODI_UA}
+        html = self._http_get(stream_url, headers=headers, cache_limit=0)
+        try: js_data = json.loads(html)
+        except: return html
+        
+        if 'url' in js_data:
+            try:
+                pd = xbmcgui.DialogProgress()
+                line1 = 'Visit: %s' % (js_data['url'])
+                pd.create('Torba IP Authorization', line1)
+                interval = 5000
+                while True:
+                    for _ in range(INTERVALS):
+                        if pd.iscanceled(): return False
+                        xbmc.sleep(interval / INTERVALS)
+
+                    html = self._http_get(stream_url, headers=headers, cache_limit=0)
+                    try: js_data = json.loads(html)
+                    except: return html
+            finally:
+                pd.close()
+        else:
+            log_utils.log('Unusable JSON from Torba: %s' % (js_data), log_utils.LOGWARNING)
+    
     def format_source_label(self, item):
         label = '[%s] %s' % (item['quality'], item['host'])
         return label
