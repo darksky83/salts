@@ -12,7 +12,7 @@ from salts_lib.constants import VIDEO_TYPES
 __all__ = ['scraper', 'proxy', 'local_scraper', 'pw_scraper', 'uflix_scraper', 'watchseries_scraper', 'movie25_scraper', 'merdb_scraper', 'nitertv_scraper',
            'icefilms_scraper', 'movieshd_scraper', 'viooz_scraper', 'filmstreaming_scraper', 'myvideolinks_scraper', 'filmikz_scraper', 'clickplay_scraper',
            'iwatch_scraper', 'ororotv_scraper', 'view47_scraper', 'vidics_scraper', 'ocw_proxy', 'losmovies_scraper', 'movie4k_scraper', 'easynews_scraper',
-           'noobroom_scraper', 'solar_scraper', 'directdl_scraper', 'streamallthis_scraper', 'afdah_scraper', 'dizibox_scraper', 'theextopia_proxy', 'mysticland_scraper',
+           'noobroom_scraper', 'solar_scraper', 'directdl_scraper', 'streamallthis_scraper', 'afdah_scraper', 'dizibox_scraper', 'theextopia_proxy',
            'streamtv_scraper', 'moviestorm_scraper', 'wmo_scraper', 'zumvo_scraper', 'wso_scraper', 'ch131_scraper', 'watchfree_scraper', 'streamlord_scraper',
            'pftv_scraper', 'flixanity_scraper', 'cmz_scraper', 'movienight_scraper', 'alluc_scraper', 'afdahorg_scraper', 'xmovies8_scraper', 'moviexk_scraper',
            'mintmovies_scraper', 'pubfilm_scraper', 'rlssource_scraper', 'couchtunerv1_scraper', 'couchtunerv2_scraper', 'ddlvalley_scraper', 'tvrelease_scraper',
