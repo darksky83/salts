@@ -229,6 +229,10 @@
          <setting id="Dizibox-base_url" type="text" label="    Base Url" default="http://www.dizibox.com" visible="eq(-1,true)"/>
          <setting id="Dizibox-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizibox_last_results" type="number" default="0" visible="false"/>
+         <setting id="DiziFilmHD-enable" type="bool" label="DiziFilmHD Enabled" default="true" visible="true"/>
+         <setting id="DiziFilmHD-base_url" type="text" label="    Base Url" default="http://dizifilmhd.net" visible="eq(-1,true)"/>
+         <setting id="DiziFilmHD-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
+         <setting id="DiziFilmHD_last_results" type="number" default="0" visible="false"/>
          <setting id="Dizigold-enable" type="bool" label="Dizigold Enabled" default="true" visible="true"/>
          <setting id="Dizigold-base_url" type="text" label="    Base Url" default="http://www.dizigold.net" visible="eq(-1,true)"/>
          <setting id="Dizigold-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
@@ -241,13 +245,13 @@
          <setting id="Dizimag-base_url" type="text" label="    Base Url" default="http://dizimag.co" visible="eq(-1,true)"/>
          <setting id="Dizimag-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizimag_last_results" type="number" default="0" visible="false"/>
+    </category>
+
+    <category label="Scrapers 2">
          <setting id="Dizipas-enable" type="bool" label="Dizipas Enabled" default="true" visible="true"/>
          <setting id="Dizipas-base_url" type="text" label="    Base Url" default="http://dizipas.com" visible="eq(-1,true)"/>
          <setting id="Dizipas-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Dizipas_last_results" type="number" default="0" visible="false"/>
-    </category>
-
-    <category label="Scrapers 2">
          <setting id="EasyNews-enable" type="bool" label="EasyNews Enabled" default="true" visible="true"/>
          <setting id="EasyNews-base_url" type="text" label="    Base Url" default="http://members.easynews.com" visible="eq(-1,true)"/>
          <setting id="EasyNews-sub_check" type="bool" label="    Include in Page Existence checks?" default="false" visible="eq(-2,true)"/>
@@ -308,10 +312,6 @@
          <setting id="iWatchOnline-base_url" type="text" label="    Base Url" default="https://www.iwatchonline.ag" visible="eq(-1,true)"/>
          <setting id="iWatchOnline-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="iWatchOnline_last_results" type="number" default="0" visible="false"/>
-         <setting id="IzlemeyeDeger-enable" type="bool" label="IzlemeyeDeger Enabled" default="true" visible="true"/>
-         <setting id="IzlemeyeDeger-base_url" type="text" label="    Base Url" default="http://www.izlemeyedeger.com" visible="eq(-1,true)"/>
-         <setting id="IzlemeyeDeger-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
-         <setting id="IzlemeyeDeger_last_results" type="number" default="0" visible="false"/>
          <setting id="Local-enable" type="bool" label="Local Enabled" default="true" visible="true"/>
          <setting id="Local-base_url" type="text" label="    Base Url" default="" visible="eq(-1,true)"/>
          <setting id="Local-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
