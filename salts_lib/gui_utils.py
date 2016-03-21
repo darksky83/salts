@@ -103,7 +103,7 @@ def perform_auto_conf(responses):
                  ['WatchHD', 'IFlix', 'MoviesPlanet', 'TVWTVS', 'MWM', '9Movies', '123Movies', 'niter.tv', 'HDMovie14', 'ororo.tv', 'm4ufree'],
                  ['torba.se', 'StreamLord', 'CyberReel', 'MovCav', 'tunemovie', 'MovieMax', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
                  ['Rainierland', 'DayT.se', 'FardaDownload', 'zumvo.com', 'PutMV', 'vivo.to', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
-                 ['IzlemeyeDeger', 'SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows', 'OnlineDizi'],
+                 ['SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows', 'OnlineDizi'],
                  ['DDLValley', '2DDL', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TheExtopia', 'RLSSource.net', 'TVRelease.Net'],
                  ['IceFilms', 'WatchEpisodes', 'PrimeWire', 'tvonline', 'SantaSeries', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker'],
                  ['MovieWatcher', 'alluc.com', 'VKFlix', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie'],
