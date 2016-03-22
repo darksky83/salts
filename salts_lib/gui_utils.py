@@ -104,7 +104,7 @@ def perform_auto_conf(responses):
                  ['torba.se', 'StreamLord', 'CyberReel', 'MovCav', 'tunemovie', 'MovieMax', 'afdah.org', 'xmovies8', 'xmovies8.v2', 'MovieXK'],
                  ['Rainierland', 'DayT.se', 'FardaDownload', 'zumvo.com', 'PutMV', 'vivo.to', 'MiraDeTodo', 'beinmovie', 'FireMoviesHD'],
                  ['DiziFilmHD', 'SezonLukDizi', 'Dizimag', 'Dizilab', 'Dizigold', 'Dizibox', 'Diziay', 'Dizipas', 'OneClickTVShows', 'OnlineDizi'],
-                 ['DDLValley', '2DDL', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TheExtopia', 'RLSSource.net', 'TVRelease.Net'],
+                 ['DL-Pars', 'DDLValley', '2DDL', 'ReleaseBB', 'MyVideoLinks.eu', 'OCW', 'TheExtopia', 'RLSSource.net', 'TVRelease.Net'],
                  ['IceFilms', 'WatchEpisodes', 'PrimeWire', 'tvonline', 'SantaSeries', 'Flixanity', 'wso.ch', 'WatchSeries', 'UFlix.org', 'Putlocker'],
                  ['MovieWatcher', 'alluc.com', 'VKFlix', 'WatchFree.to', 'pftv', 'streamallthis.is', 'Movie4K', 'afdah', 'SolarMovie'],
                  ['MovieSub', 'MovieHut', 'CouchTunerV2', 'CouchTunerV1', 'Watch8Now', 'yshows', 'iWatchOnline'],

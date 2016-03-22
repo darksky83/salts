@@ -18,7 +18,7 @@ __all__ = ['scraper', 'proxy', 'local_scraper', 'pw_scraper', 'uflix_scraper', '
            'mintmovies_scraper', 'pubfilm_scraper', 'rlssource_scraper', 'couchtunerv1_scraper', 'couchtunerv2_scraper', 'ddlvalley_scraper', 'tvrelease_scraper',
            'tunemovie_scraper', 'watch8now_scraper', 'dizilab_scraper', 'beinmovie_scraper', 'dizimag_scraper', 'oneclicktvshows_scraper', 'moviehut_scraper',
            'dizigold_scraper', 'onlinemoviespro_scraper', 'emoviespro_scraper', '123movies_scraper', 'rainierland_scraper', 'rlsbb_scraper', 'sezonlukdizi_scraper',
-           'movietube_scraper', 'putlocker_scraper', 'yshows_scraper', 'diziay_scraper', 'ganool_scraper', 'furk_scraper', 'dizifilmhd_scraper',
+           'movietube_scraper', 'putlocker_scraper', 'yshows_scraper', 'diziay_scraper', 'ganool_scraper', 'furk_scraper', 'dizifilmhd_scraper', 'dl-pars_scraper',
            'miradetodo_scraper', 'dizipas_scraper', 'xmovies8v2_scraper', 'moviesplanet_scraper', 'premiumize_scraper', 'putmv_scraper', 'tvonline_scraper',
            '9movies_scraper', 'watchhd_scraper', 'iflix_proxy', 'firemovies_scraper', 'farda_scraper', 'hdmovie14_scraper', 'dayt_scraper', 'tvwtvs_scraper',
            'moviesub_scraper', 'cyberreel_proxy', 'santaseries_scraper', 'watchepisodes_scraper', 'moviehdmax_scraper', 'vkflix_scraper', 'm4ufree_scraper',
