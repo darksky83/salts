@@ -23,6 +23,7 @@ import xbmcvfs
 import xbmcgui
 import xbmc
 import json
+import time
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -40,6 +41,7 @@ SEARCH_URL = '/search?title=%s&order=recent&_pjax=#films-pjax-container'
 TOR_URL = BASE_URL2 + '/api/torrent/%s.json'
 PL_URL = BASE_URL2 + '/api/torrent/%s/%s.m3u8'
 INTERVALS = 5
+EXPIRE_DURATION = 5 * 60
 KODI_UA = 'Lavf/56.40.101'
 M3U8_PATH = os.path.join(kodi.translate_path(kodi.get_profile()), 'torbase.m3u8')
 M3U8_TEMPLATE = [
@@ -88,14 +90,28 @@ class TorbaSe_Scraper(scraper.Scraper):
         
         if 'url' in js_data:
             try:
+                if 'qrcode' in js_data:
+                    img = xbmcgui.ControlImage(558, 0, 164, 164, js_data['qrcode'])
+                    wdlg = xbmcgui.WindowDialog()
+                    wdlg.addControl(img)
+                    wdlg.show()
+                    line2 = 'Scan the QR Code or v'
+                else:
+                    line2 = 'V'
                 pd = xbmcgui.DialogProgress()
-                line1 = 'Visit: %s' % (js_data['url'])
-                pd.create('Torba IP Authorization', line1)
+                line1 = 'To watch this video you must authorize your IP address.'
+                line2 += 'isit [COLOR blue]%s[/COLOR] from any device on the same network as SALTS.' % (js_data['url'])
+                pd.create('Torba IP Authorization', line1, line2)
+                pd.update(100)
+                begin = time.time()
                 interval = 5000
                 while True:
                     for _ in range(INTERVALS):
                         if pd.iscanceled(): return False
                         xbmc.sleep(interval / INTERVALS)
+                        elapsed = time.time() - begin
+                        progress = int((EXPIRE_DURATION - elapsed) * 100 / EXPIRE_DURATION)
+                        pd.update(progress)
 
                     html = self._http_get(stream_url, headers=headers, cache_limit=0)
                     try: js_data = json.loads(html)
