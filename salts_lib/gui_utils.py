@@ -130,6 +130,70 @@ def perform_auto_conf(responses):
         
     kodi.notify(msg=i18n('auto_conf_complete'))
 
+def do_ip_auth(scraper, auth_url, visit_url, qr_code):
+    EXPIRE_DURATION = 60 * 5
+    ACTION_PREVIOUS_MENU = 10
+    ACTION_BACK = 92
+    CANCEL_BUTTON = 200
+    INSTR_LABEL = 101
+    QR_CODE_CTRL = 102
+    PROGRESS_CTRL = 103
+    
+    class AutoConfDialog(xbmcgui.WindowXMLDialog):
+        def onInit(self):
+            # log_utils.log('onInit:', log_utils.LOGDEBUG)
+            self.cancel = False
+            self.getControl(INSTR_LABEL).setLabel(i18n('ip_auth_line1') + visit_url + i18n('ip_auth_line2'))
+            self.progress = self.getControl(PROGRESS_CTRL)
+            self.progress.setPercent(100)
+            if qr_code:
+                img = self.getControl(QR_CODE_CTRL)
+                img.setImage(qr_code)
+            
+        def onAction(self, action):
+            # log_utils.log('Action: %s' % (action.getId()), log_utils.LOGDEBUG)
+            if action == ACTION_PREVIOUS_MENU or action == ACTION_BACK:
+                self.cancel = True
+                self.close()
+
+        def onControl(self, control):
+            # log_utils.log('onControl: %s' % (control), log_utils.LOGDEBUG)
+            pass
+
+        def onFocus(self, control):
+            # log_utils.log('onFocus: %s' % (control), log_utils.LOGDEBUG)
+            pass
+
+        def onClick(self, control):
+            # log_utils.log('onClick: %s' % (control), log_utils.LOGDEBUG)
+            if control == CANCEL_BUTTON:
+                self.cancel = True
+                self.close()
+        
+        def setProgress(self, progress):
+            self.progress.setPercent(progress)
+
+    dialog = AutoConfDialog('IpAuthDialog.xml', kodi.get_path())
+    dialog.show()
+    interval = 5000
+    begin = time.time()
+    try:
+        while True:
+            for _ in range(INTERVALS):
+                kodi.sleep(interval / INTERVALS)
+                elapsed = time.time() - begin
+                progress = int((EXPIRE_DURATION - elapsed) * 100 / EXPIRE_DURATION)
+                dialog.setProgress(progress)
+                if progress <= 0 or dialog.cancel:
+                    return False
+                
+            authorized, result = scraper.check_auth(auth_url)
+            if authorized:
+                return result
+    finally:
+        log_utils.log('deleting dialog')
+        del dialog
+
 def do_auto_config():
     ACTION_PREVIOUS_MENU = 10
     ACTION_BACK = 92

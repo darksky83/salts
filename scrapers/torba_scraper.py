@@ -20,10 +20,10 @@ import re
 import urllib
 import urlparse
 import xbmcvfs
-import xbmcgui
-import xbmc
+# import xbmcgui
+# import xbmc
 import json
-import time
+# import time
 from salts_lib import dom_parser
 from salts_lib import kodi
 from salts_lib import log_utils
@@ -31,6 +31,7 @@ from salts_lib import scraper_utils
 from salts_lib.constants import FORCE_NO_MATCH
 from salts_lib.constants import QUALITIES
 from salts_lib.constants import VIDEO_TYPES
+from salts_lib import gui_utils
 import scraper
 
 
@@ -82,44 +83,25 @@ class TorbaSe_Scraper(scraper.Scraper):
         except Exception as e:
             log_utils.log('Failure during torba resolver: %s' % (e), log_utils.LOGWARNING)
 
-    def __authorize_ip(self, stream_url):
-        headers = {'User-Agent': KODI_UA}
-        html = self._http_get(stream_url, headers=headers, cache_limit=0)
-        try: js_data = json.loads(html)
-        except: return html
-        
-        if 'url' in js_data:
-            try:
-                if 'qrcode' in js_data:
-                    img = xbmcgui.ControlImage(558, 0, 164, 164, js_data['qrcode'])
-                    wdlg = xbmcgui.WindowDialog()
-                    wdlg.addControl(img)
-                    wdlg.show()
-                    line2 = 'Scan the QR Code or v'
-                else:
-                    line2 = 'V'
-                pd = xbmcgui.DialogProgress()
-                line1 = 'To watch this video you must authorize your IP address.'
-                line2 += 'isit [COLOR blue]%s[/COLOR] from any device on the same network as SALTS.' % (js_data['url'])
-                pd.create('Torba IP Authorization', line1, line2)
-                pd.update(100)
-                begin = time.time()
-                interval = 5000
-                while True:
-                    for _ in range(INTERVALS):
-                        if pd.iscanceled(): return False
-                        xbmc.sleep(interval / INTERVALS)
-                        elapsed = time.time() - begin
-                        progress = int((EXPIRE_DURATION - elapsed) * 100 / EXPIRE_DURATION)
-                        pd.update(progress)
-
-                    html = self._http_get(stream_url, headers=headers, cache_limit=0)
-                    try: js_data = json.loads(html)
-                    except: return html
-            finally:
-                pd.close()
+    def __authorize_ip(self, auth_url):
+        authorized, js_data = self.check_auth(auth_url)
+        if authorized:
+            return js_data
         else:
-            log_utils.log('Unusable JSON from Torba: %s' % (js_data), log_utils.LOGWARNING)
+            if 'url' in js_data:
+                return gui_utils.do_ip_auth(self, auth_url, js_data['url'], js_data.get('qrcode'))
+            else:
+                log_utils.log('Unusable JSON from Torba: %s' % (js_data), log_utils.LOGWARNING)
+                return False
+    
+    def check_auth(self, auth_url):
+        headers = {'User-Agent': KODI_UA}
+        html = self._http_get(auth_url, headers=headers, cache_limit=0)
+        try:
+            js_data = json.loads(html)
+            return False, js_data
+        except:
+            return True, html
     
     def format_source_label(self, item):
         label = '[%s] %s' % (item['quality'], item['host'])
