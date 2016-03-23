@@ -58,6 +58,7 @@ class TorbaSe_Scraper(scraper.Scraper):
     def __init__(self, timeout=scraper.DEFAULT_TIMEOUT):
         self.timeout = timeout
         self.base_url = kodi.get_setting('%s-base_url' % (self.get_name()))
+        self.auth_url = False
 
     @classmethod
     def provides(cls):
@@ -84,19 +85,23 @@ class TorbaSe_Scraper(scraper.Scraper):
             log_utils.log('Failure during torba resolver: %s' % (e), log_utils.LOGWARNING)
 
     def __authorize_ip(self, auth_url):
-        authorized, js_data = self.check_auth(auth_url)
+        self.auth_url = auth_url
+        authorized, response = self.check_auth()
         if authorized:
-            return js_data
+            return response
         else:
-            if 'url' in js_data:
-                return gui_utils.do_ip_auth(self, auth_url, js_data['url'], js_data.get('qrcode'))
+            if 'url' in response:
+                return gui_utils.do_ip_auth(self, response['url'], response.get('qrcode'))
             else:
-                log_utils.log('Unusable JSON from Torba: %s' % (js_data), log_utils.LOGWARNING)
+                log_utils.log('Unusable JSON from Torba: %s' % (response), log_utils.LOGWARNING)
                 return False
     
-    def check_auth(self, auth_url):
+    def check_auth(self):
+        if not self.auth_url:
+            return True, None
+        
         headers = {'User-Agent': KODI_UA}
-        html = self._http_get(auth_url, headers=headers, cache_limit=0)
+        html = self._http_get(self.auth_url, headers=headers, cache_limit=0)
         try:
             js_data = json.loads(html)
             return False, js_data

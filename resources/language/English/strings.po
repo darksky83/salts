@@ -1055,7 +1055,7 @@ msgid "To watch this video scan the QR Code below or visit [COLOR blue]"
 msgstr ""
 
 msgctxt "#30271"
-msgid "[/COLOR] from any device on the same network as SALTS."
+msgid "[/COLOR] from any device on the same network as this device."
 msgstr ""
 
 msgctxt "#30500"
@@ -1769,6 +1769,6 @@ msgctxt "#30674"
 msgid "Trakt API Offline Mode"
 msgstr ""
 
-msgctxt "#30674"
+msgctxt "#30675"
 msgid "Torba IP Authorization"
 msgstr ""

@@ -130,7 +130,7 @@ def perform_auto_conf(responses):
         
     kodi.notify(msg=i18n('auto_conf_complete'))
 
-def do_ip_auth(scraper, auth_url, visit_url, qr_code):
+def do_ip_auth(scraper, visit_url, qr_code):
     EXPIRE_DURATION = 60 * 5
     ACTION_PREVIOUS_MENU = 10
     ACTION_BACK = 92
@@ -139,7 +139,7 @@ def do_ip_auth(scraper, auth_url, visit_url, qr_code):
     QR_CODE_CTRL = 102
     PROGRESS_CTRL = 103
     
-    class AutoConfDialog(xbmcgui.WindowXMLDialog):
+    class IpAuthDialog(xbmcgui.WindowXMLDialog):
         def onInit(self):
             # log_utils.log('onInit:', log_utils.LOGDEBUG)
             self.cancel = False
@@ -173,7 +173,7 @@ def do_ip_auth(scraper, auth_url, visit_url, qr_code):
         def setProgress(self, progress):
             self.progress.setPercent(progress)
 
-    dialog = AutoConfDialog('IpAuthDialog.xml', kodi.get_path())
+    dialog = IpAuthDialog('IpAuthDialog.xml', kodi.get_path())
     dialog.show()
     interval = 5000
     begin = time.time()
@@ -187,9 +187,8 @@ def do_ip_auth(scraper, auth_url, visit_url, qr_code):
                 if progress <= 0 or dialog.cancel:
                     return False
                 
-            authorized, result = scraper.check_auth(auth_url)
-            if authorized:
-                return result
+            authorized, result = scraper.check_auth()
+            if authorized: return result
     finally:
         del dialog
 
