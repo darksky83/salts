@@ -313,7 +313,7 @@
          <setting id="IFlix_last_results" type="number" default="0" visible="false"/>
          <setting id="IFlix-base_url2" type="text" label="    TV Shows Base Url" default="http://tvshows.cnfstudio.com" visible="eq(-4,true)"/>
          <setting id="iWatchOnline-enable" type="bool" label="iWatchOnline Enabled" default="true" visible="true"/>
-         <setting id="iWatchOnline-base_url" type="text" label="    Base Url" default="https://www.iwatchonline.ag" visible="eq(-1,true)"/>
+         <setting id="iWatchOnline-base_url" type="text" label="    Base Url" default="https://www.iwatchonline.ph" visible="eq(-1,true)"/>
          <setting id="iWatchOnline-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="iWatchOnline_last_results" type="number" default="0" visible="false"/>
          <setting id="Local-enable" type="bool" label="Local Enabled" default="true" visible="true"/>
@@ -353,7 +353,7 @@
          <setting id="movie25-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="movie25_last_results" type="number" default="0" visible="false"/>
          <setting id="Movie4K-enable" type="bool" label="Movie4K Enabled" default="true" visible="true"/>
-         <setting id="Movie4K-base_url" type="text" label="    Base Url" default="http://www.movie4k.to" visible="eq(-1,true)"/>
+         <setting id="Movie4K-base_url" type="text" label="    Base Url" default="http://movie4k.to" visible="eq(-1,true)"/>
          <setting id="Movie4K-sub_check" type="bool" label="    Include in Page Existence checks?" default="true" visible="eq(-2,true)"/>
          <setting id="Movie4K_last_results" type="number" default="0" visible="false"/>
          <setting id="MovieHut-enable" type="bool" label="MovieHut Enabled" default="true" visible="true"/>
