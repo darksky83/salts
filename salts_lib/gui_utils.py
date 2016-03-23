@@ -191,7 +191,6 @@ def do_ip_auth(scraper, auth_url, visit_url, qr_code):
             if authorized:
                 return result
     finally:
-        log_utils.log('deleting dialog')
         del dialog
 
 def do_auto_config():

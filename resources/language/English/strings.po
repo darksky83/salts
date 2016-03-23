@@ -1768,3 +1768,7 @@ msgstr ""
 msgctxt "#30674"
 msgid "Trakt API Offline Mode"
 msgstr ""
+
+msgctxt "#30674"
+msgid "Torba IP Authorization"
+msgstr ""
