@@ -31,7 +31,6 @@ import scraper
 
 
 BASE_URL = 'http://sezonlukdizi.com'
-#SEARCH_URL = '/diziler.asp?adi=%s&tur=&ulke=&tv=&minYil=&maxYil=&minImdb=&siralama_tipi=imdb&siralama_turu=desc&ps=25'
 SEARCH_URL = '/js/dizi.js'
 SEASON_URL = '/ajax/dataDizi.asp'
 GET_VIDEO_URL = '/service/get_video_part'
